@@ -4,11 +4,20 @@
  */
 package quanlythuvien.ui;
 
+import java.io.File;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.List;
+import javax.swing.ImageIcon;
+import javax.swing.JFileChooser;
+import javax.swing.table.DefaultTableModel;
+import quanlythuvien.DAO.SachDAO;
+import quanlythuvien.entity.Sach;
+import quanlythuvien.util.MsgBox;
+import quanlythuvien.util.XImage;
 
 /**
  *
@@ -16,23 +25,29 @@ import java.sql.Statement;
  */
 public class ThongTinSach extends javax.swing.JFrame {
 
-    private  String connectionUrl = "jdbc:sqlserver://localhost:1433;databaseName=Elib;user=sa;password=My27012003@";
+    int row = -1;
+    SachDAO sDAO = new SachDAO();
+    JFileChooser fileChooser = new JFileChooser();
+
+    private String connectionUrl = "jdbc:sqlserver://localhost:1433;databaseName=Elib;user=sa;password=My27012003@";
+
     public ThongTinSach() {
         initComponents();
         setLocationRelativeTo(null);
         setTitle("Thông Tin Sách");
         loaddtheloaiToCombobox();
         loadngonguToCombobox();
+        loadnxbToCombobox();
     }
-    
-        public void loaddtheloaiToCombobox() {
+
+    public void loaddtheloaiToCombobox() {
 
         try (Connection con = DriverManager.getConnection(connectionUrl); Statement stmt = con.createStatement();) {
             String sql = "Select TenLoai from THELOAI";
 //            PreparedStatement ps = con.prepareStatement(sql);
             ResultSet rs = stmt.executeQuery(sql);
             while (rs.next()) {
-                cboTheLoai.addItem(rs.getString(1));   
+                cboTheLoai.addItem(rs.getString(1));
             }
 
         } // Handle any errors that may have occurred.
@@ -40,14 +55,15 @@ public class ThongTinSach extends javax.swing.JFrame {
             e.printStackTrace();
         }
     }
-                public void loadngonguToCombobox() {
+
+    public void loadngonguToCombobox() {
 
         try (Connection con = DriverManager.getConnection(connectionUrl); Statement stmt = con.createStatement();) {
             String sql = "Select TenNN from NGONNGU";
 //            PreparedStatement ps = con.prepareStatement(sql);
             ResultSet rs = stmt.executeQuery(sql);
             while (rs.next()) {
-                cboNgonNgu.addItem(rs.getString(1));   
+                cboNgonNgu.addItem(rs.getString(1));
             }
 
         } // Handle any errors that may have occurred.
@@ -55,6 +71,112 @@ public class ThongTinSach extends javax.swing.JFrame {
             e.printStackTrace();
         }
     }
+        public void loadnxbToCombobox() {
+
+        try (Connection con = DriverManager.getConnection(connectionUrl); Statement stmt = con.createStatement();) {
+            String sql = "Select TenNXB from NHAXUATBAN";
+//            PreparedStatement ps = con.prepareStatement(sql);
+            ResultSet rs = stmt.executeQuery(sql);
+            while (rs.next()) {
+                cboNXB.addItem(rs.getString(1));
+            }
+
+        } // Handle any errors that may have occurred.
+        catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+    
+    void clearForm(){
+        txtMaS.setText("");
+        txtTenS.setText("");
+        txtTacGia.setText("");
+        cboNXB.setSelectedIndex(0);
+        cboTheLoai.setSelectedIndex(0);
+        cboNgonNgu.setSelectedIndex(0);
+        txtViTri.setText("");
+        txtDonGia.setText("");
+        txtSoLuong.setText("");
+        lblAnh.setIcon(null);
+        
+}
+
+    void setForm(Sach sa) {
+        txtMaS.setText(sa.getMaSach());
+        txtTenS.setText(sa.getTenSach());
+        txtTacGia.setText(sa.getTenTacGia());
+        cboNXB.setSelectedItem(sa.getNXB());
+        cboTheLoai.setSelectedItem(sa.getTheLoai());
+        cboNgonNgu.setSelectedItem(sa.getNgonNgu());
+        txtDonGia.setText(String.valueOf(sa.getDonGia()));
+        txtViTri.setText(sa.getViTri());      
+        txtSoLuong.setText(String.valueOf(sa.getSoLuong()));
+        if (sa.getAnh() != null) {
+            lblAnh.setToolTipText(sa.getAnh());
+            lblAnh.setIcon(XImage.read(sa.getAnh()));
+        }
+
+    }
+
+    Sach getForm() {
+        Sach sa = new Sach();
+        sa.setMaSach(txtMaS.getText());
+        sa.setTenSach(txtTenS.getText());
+        sa.setTenTacGia(txtTacGia.getText());
+        sa.setNXB(cboNXB.getSelectedItem().toString());
+        sa.setTheLoai(cboTheLoai.getSelectedItem().toString());
+        sa.setNgonNgu(cboNgonNgu.getSelectedItem().toString());
+        sa.setDonGia(Double.parseDouble(txtDonGia.getText()));
+        sa.setViTri(txtViTri.getText());        
+        sa.setSoLuong(Integer.parseInt(txtSoLuong.getText()));
+        sa.setAnh(lblAnh.getToolTipText());
+        return sa;
+    }
+    
+    void insert(){
+        Sach sa = getForm();
+        try {
+            sDAO.insert(sa);
+            this.clearForm();
+            MsgBox.alert(this, "Thêm mới thành công");
+        } catch (Exception e) {
+            MsgBox.alert(this, "Thêm mới thất bại! ");
+        }
+        
+    }
+    
+    void update(){
+        Sach sa = getForm();
+        try {
+            sDAO.update(sa);
+            MsgBox.alert(this, "Cập nhật thành công");
+        } catch (Exception e) {
+            MsgBox.alert(this, "Cập nhật thất bại");
+        }
+    }
+    
+        void chooseImage(){
+        if(fileChooser.showOpenDialog(this) == JFileChooser.APPROVE_OPTION){
+            File file = fileChooser.getSelectedFile();
+            XImage.save(file);
+            ImageIcon icon = XImage.read(file.getName());
+            lblAnh.setIcon(icon);
+            lblAnh.setToolTipText(file.getName());
+        }
+    }
+    
+//    void delete(){
+//        if(!Auth.isManager()){
+//            MsgBox.alert(this, "Bạn không có quyền xoá nhân viên này");
+//        }else{
+//            String maSach = txtMaS.getText();
+//            if(MsgBox.confirm(this, "Bạn thực sự muốn xoá sách này?")){
+//                sDAO.delete(maSach);
+//                clearForm();
+//                MsgBox.alert(this, "Xoá thành công");
+//            }
+//        }
+//    }
 
     /**
      * This method is called from within the constructor to initialize the form.
@@ -77,14 +199,13 @@ public class ThongTinSach extends javax.swing.JFrame {
         jLabel8 = new javax.swing.JLabel();
         jLabel9 = new javax.swing.JLabel();
         jLabel12 = new javax.swing.JLabel();
-        jTextField1 = new javax.swing.JTextField();
-        jTextField2 = new javax.swing.JTextField();
-        jTextField3 = new javax.swing.JTextField();
-        jTextField4 = new javax.swing.JTextField();
-        jTextField5 = new javax.swing.JTextField();
-        jTextField7 = new javax.swing.JTextField();
+        txtDonGia = new javax.swing.JTextField();
+        txtMaS = new javax.swing.JTextField();
+        txtTenS = new javax.swing.JTextField();
+        txtTacGia = new javax.swing.JTextField();
+        txtViTri = new javax.swing.JTextField();
         cboTheLoai = new javax.swing.JComboBox<>();
-        jLabel15 = new javax.swing.JLabel();
+        lblAnh = new javax.swing.JLabel();
         jButton5 = new javax.swing.JButton();
         jButton1 = new javax.swing.JButton();
         jButton6 = new javax.swing.JButton();
@@ -92,8 +213,9 @@ public class ThongTinSach extends javax.swing.JFrame {
         cboNgonNgu = new javax.swing.JComboBox<>();
         jLabel17 = new javax.swing.JLabel();
         jLabel18 = new javax.swing.JLabel();
-        jTextField6 = new javax.swing.JTextField();
+        txtSoLuong = new javax.swing.JTextField();
         jLabel16 = new javax.swing.JLabel();
+        cboNXB = new javax.swing.JComboBox<>();
         jLabel2 = new javax.swing.JLabel();
         jMenuBar1 = new javax.swing.JMenuBar();
         jMenu1 = new javax.swing.JMenu();
@@ -132,25 +254,24 @@ public class ThongTinSach extends javax.swing.JFrame {
         getContentPane().add(jLabel6, new org.netbeans.lib.awtextra.AbsoluteConstraints(90, 210, -1, -1));
 
         jLabel8.setText("Đơn giá:");
-        getContentPane().add(jLabel8, new org.netbeans.lib.awtextra.AbsoluteConstraints(90, 370, -1, -1));
+        getContentPane().add(jLabel8, new org.netbeans.lib.awtextra.AbsoluteConstraints(90, 330, -1, -1));
 
         jLabel9.setText("Thể loại:");
         getContentPane().add(jLabel9, new org.netbeans.lib.awtextra.AbsoluteConstraints(90, 250, -1, -1));
 
         jLabel12.setText("Vị trí:");
-        getContentPane().add(jLabel12, new org.netbeans.lib.awtextra.AbsoluteConstraints(90, 330, -1, -1));
-        getContentPane().add(jTextField1, new org.netbeans.lib.awtextra.AbsoluteConstraints(160, 370, 210, -1));
-        getContentPane().add(jTextField2, new org.netbeans.lib.awtextra.AbsoluteConstraints(160, 90, 210, -1));
-        getContentPane().add(jTextField3, new org.netbeans.lib.awtextra.AbsoluteConstraints(160, 130, 210, -1));
-        getContentPane().add(jTextField4, new org.netbeans.lib.awtextra.AbsoluteConstraints(160, 170, 210, -1));
-        getContentPane().add(jTextField5, new org.netbeans.lib.awtextra.AbsoluteConstraints(160, 210, 210, -1));
-        getContentPane().add(jTextField7, new org.netbeans.lib.awtextra.AbsoluteConstraints(160, 330, 210, -1));
+        getContentPane().add(jLabel12, new org.netbeans.lib.awtextra.AbsoluteConstraints(90, 370, -1, -1));
+        getContentPane().add(txtDonGia, new org.netbeans.lib.awtextra.AbsoluteConstraints(160, 330, 210, -1));
+        getContentPane().add(txtMaS, new org.netbeans.lib.awtextra.AbsoluteConstraints(160, 90, 210, -1));
+        getContentPane().add(txtTenS, new org.netbeans.lib.awtextra.AbsoluteConstraints(160, 130, 210, -1));
+        getContentPane().add(txtTacGia, new org.netbeans.lib.awtextra.AbsoluteConstraints(160, 170, 210, -1));
+        getContentPane().add(txtViTri, new org.netbeans.lib.awtextra.AbsoluteConstraints(160, 370, 210, -1));
 
         cboTheLoai.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Chọn Thể Loại" }));
         getContentPane().add(cboTheLoai, new org.netbeans.lib.awtextra.AbsoluteConstraints(160, 250, 210, -1));
 
-        jLabel15.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
-        getContentPane().add(jLabel15, new org.netbeans.lib.awtextra.AbsoluteConstraints(430, 100, 130, 160));
+        lblAnh.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
+        getContentPane().add(lblAnh, new org.netbeans.lib.awtextra.AbsoluteConstraints(430, 100, 130, 160));
 
         jButton5.setBackground(new java.awt.Color(117, 76, 36));
         jButton5.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
@@ -165,6 +286,11 @@ public class ThongTinSach extends javax.swing.JFrame {
         getContentPane().add(jButton5, new org.netbeans.lib.awtextra.AbsoluteConstraints(170, 450, 140, 30));
 
         jButton1.setText("Chọn Ảnh");
+        jButton1.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton1ActionPerformed(evt);
+            }
+        });
         getContentPane().add(jButton1, new org.netbeans.lib.awtextra.AbsoluteConstraints(450, 280, -1, -1));
 
         jButton6.setBackground(new java.awt.Color(117, 76, 36));
@@ -190,10 +316,13 @@ public class ThongTinSach extends javax.swing.JFrame {
 
         jLabel18.setText("Số Lượng:");
         getContentPane().add(jLabel18, new org.netbeans.lib.awtextra.AbsoluteConstraints(90, 410, -1, -1));
-        getContentPane().add(jTextField6, new org.netbeans.lib.awtextra.AbsoluteConstraints(160, 410, 210, -1));
+        getContentPane().add(txtSoLuong, new org.netbeans.lib.awtextra.AbsoluteConstraints(160, 410, 210, -1));
 
         jLabel16.setIcon(new javax.swing.ImageIcon(getClass().getResource("/quanlythuvien/icon/FiveO - ELib Low Opacity.png"))); // NOI18N
         getContentPane().add(jLabel16, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 420, 500, 100));
+
+        cboNXB.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Chọn Nhà Xuất Bản" }));
+        getContentPane().add(cboNXB, new org.netbeans.lib.awtextra.AbsoluteConstraints(160, 210, 210, -1));
 
         jLabel2.setIcon(new javax.swing.ImageIcon(getClass().getResource("/quanlythuvien/icon/FiveO - ELib Low Opacity.png"))); // NOI18N
         jLabel2.setText("âcsdasd");
@@ -218,11 +347,17 @@ public class ThongTinSach extends javax.swing.JFrame {
 
     private void jButton5ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton5ActionPerformed
         // TODO add your handling code here:
+        insert();
     }//GEN-LAST:event_jButton5ActionPerformed
 
     private void jButton6ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton6ActionPerformed
         // TODO add your handling code here:
     }//GEN-LAST:event_jButton6ActionPerformed
+
+    private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
+        // TODO add your handling code here:
+        chooseImage();
+    }//GEN-LAST:event_jButton1ActionPerformed
 
     /**
      * @param args the command line arguments
@@ -260,6 +395,7 @@ public class ThongTinSach extends javax.swing.JFrame {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JComboBox<String> cboNXB;
     private javax.swing.JComboBox<String> cboNgonNgu;
     private javax.swing.JComboBox<String> cboTheLoai;
     private javax.swing.JButton jButton1;
@@ -271,7 +407,6 @@ public class ThongTinSach extends javax.swing.JFrame {
     private javax.swing.JLabel jLabel12;
     private javax.swing.JLabel jLabel13;
     private javax.swing.JLabel jLabel14;
-    private javax.swing.JLabel jLabel15;
     private javax.swing.JLabel jLabel16;
     private javax.swing.JLabel jLabel17;
     private javax.swing.JLabel jLabel18;
@@ -287,12 +422,12 @@ public class ThongTinSach extends javax.swing.JFrame {
     private javax.swing.JMenu jMenu2;
     private javax.swing.JMenu jMenu3;
     private javax.swing.JMenuBar jMenuBar1;
-    private javax.swing.JTextField jTextField1;
-    private javax.swing.JTextField jTextField2;
-    private javax.swing.JTextField jTextField3;
-    private javax.swing.JTextField jTextField4;
-    private javax.swing.JTextField jTextField5;
-    private javax.swing.JTextField jTextField6;
-    private javax.swing.JTextField jTextField7;
+    private javax.swing.JLabel lblAnh;
+    private javax.swing.JTextField txtDonGia;
+    private javax.swing.JTextField txtMaS;
+    private javax.swing.JTextField txtSoLuong;
+    private javax.swing.JTextField txtTacGia;
+    private javax.swing.JTextField txtTenS;
+    private javax.swing.JTextField txtViTri;
     // End of variables declaration//GEN-END:variables
 }
