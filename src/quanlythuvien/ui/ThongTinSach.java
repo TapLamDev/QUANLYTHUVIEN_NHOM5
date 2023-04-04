@@ -71,7 +71,8 @@ public class ThongTinSach extends javax.swing.JFrame {
             e.printStackTrace();
         }
     }
-        public void loadnxbToCombobox() {
+
+    public void loadnxbToCombobox() {
 
         try (Connection con = DriverManager.getConnection(connectionUrl); Statement stmt = con.createStatement();) {
             String sql = "Select TenNXB from NHAXUATBAN";
@@ -86,8 +87,8 @@ public class ThongTinSach extends javax.swing.JFrame {
             e.printStackTrace();
         }
     }
-    
-    void clearForm(){
+
+    void clearForm() {
         txtMaS.setText("");
         txtTenS.setText("");
         txtTacGia.setText("");
@@ -98,8 +99,8 @@ public class ThongTinSach extends javax.swing.JFrame {
         txtDonGia.setText("");
         txtSoLuong.setText("");
         lblAnh.setIcon(null);
-        
-}
+
+    }
 
     void setForm(Sach sa) {
         txtMaS.setText(sa.getMaSach());
@@ -109,7 +110,7 @@ public class ThongTinSach extends javax.swing.JFrame {
         cboTheLoai.setSelectedItem(sa.getTheLoai());
         cboNgonNgu.setSelectedItem(sa.getNgonNgu());
         txtDonGia.setText(String.valueOf(sa.getDonGia()));
-        txtViTri.setText(sa.getViTri());      
+        txtViTri.setText(sa.getViTri());
         txtSoLuong.setText(String.valueOf(sa.getSoLuong()));
         if (sa.getAnh() != null) {
             lblAnh.setToolTipText(sa.getAnh());
@@ -127,13 +128,13 @@ public class ThongTinSach extends javax.swing.JFrame {
         sa.setTheLoai(cboTheLoai.getSelectedItem().toString());
         sa.setNgonNgu(cboNgonNgu.getSelectedItem().toString());
         sa.setDonGia(Double.parseDouble(txtDonGia.getText()));
-        sa.setViTri(txtViTri.getText());        
+        sa.setViTri(txtViTri.getText());
         sa.setSoLuong(Integer.parseInt(txtSoLuong.getText()));
         sa.setAnh(lblAnh.getToolTipText());
         return sa;
     }
-    
-    void insert(){
+
+    void insert() {
         Sach sa = getForm();
         try {
             sDAO.insert(sa);
@@ -142,10 +143,10 @@ public class ThongTinSach extends javax.swing.JFrame {
         } catch (Exception e) {
             MsgBox.alert(this, "Thêm mới thất bại! ");
         }
-        
+
     }
-    
-    void update(){
+
+    void update() {
         Sach sa = getForm();
         try {
             sDAO.update(sa);
@@ -154,9 +155,9 @@ public class ThongTinSach extends javax.swing.JFrame {
             MsgBox.alert(this, "Cập nhật thất bại");
         }
     }
-    
-        void chooseImage(){
-        if(fileChooser.showOpenDialog(this) == JFileChooser.APPROVE_OPTION){
+
+    void chooseImage() {
+        if (fileChooser.showOpenDialog(this) == JFileChooser.APPROVE_OPTION) {
             File file = fileChooser.getSelectedFile();
             XImage.save(file);
             ImageIcon icon = XImage.read(file.getName());
@@ -164,7 +165,7 @@ public class ThongTinSach extends javax.swing.JFrame {
             lblAnh.setToolTipText(file.getName());
         }
     }
-    
+
 //    void delete(){
 //        if(!Auth.isManager()){
 //            MsgBox.alert(this, "Bạn không có quyền xoá nhân viên này");
@@ -177,7 +178,6 @@ public class ThongTinSach extends javax.swing.JFrame {
 //            }
 //        }
 //    }
-
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always

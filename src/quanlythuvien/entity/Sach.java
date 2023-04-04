@@ -1,8 +1,7 @@
-
 package quanlythuvien.entity;
 
-
 public class Sach {
+
     private String MaSach;
     private String TenSach;
     private String TenTacGia;
@@ -110,6 +109,4 @@ public class Sach {
         this.Anh = Anh;
     }
 
-    
-    
 }
