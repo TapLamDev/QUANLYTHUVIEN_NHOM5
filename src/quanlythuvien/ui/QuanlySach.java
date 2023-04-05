@@ -4,12 +4,14 @@
  */
 package quanlythuvien.ui;
 
+import java.io.File;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.List;
+import javax.swing.ImageIcon;
 import javax.swing.JFileChooser;
 import javax.swing.table.DefaultTableModel;
 import quanlythuvien.DAO.SachDAO;
@@ -37,6 +39,7 @@ public class QuanlySach extends javax.swing.JFrame {
         loaddtheloaiToCombobox();
         loadngonguToCombobox();
         loadnxbToCombobox();
+        this.fillTable();
     }
 
     public void initTable() {
@@ -139,6 +142,13 @@ public class QuanlySach extends javax.swing.JFrame {
         return sa;
     }
 
+    void edit() {
+        String maSach = (String) tblQuanLySach.getValueAt(this.row, 0);
+        Sach s = sDAO.selectById(maSach);
+        this.setForm(s);
+
+    }
+
     void fillTable() {
         DefaultTableModel model = (DefaultTableModel) tblQuanLySach.getModel();
         model.setRowCount(0);
@@ -152,8 +162,8 @@ public class QuanlySach extends javax.swing.JFrame {
                     s.getNXB(),
                     s.getTheLoai(),
                     s.getNgonNgu(),
-                    s.getViTri(),
                     s.getDonGia(),
+                    s.getViTri(),
                     s.getSoLuong(),
                     s.getAnh()
                 };
@@ -194,18 +204,14 @@ public class QuanlySach extends javax.swing.JFrame {
             txtDonGia.requestFocus();
         } else {
             Sach s = getForm();
-            if (validates() == false) {
-
-            } else {
-                try {
-                    sDAO.update(s);
-                    this.fillTable();
-                    this.clearForm();
-                    MsgBox.alert(this, "Cập nhật thành công!");
-                } catch (Exception e) {
-                    MsgBox.alert(this, "Cập nhật thất bại!");
-                    e.printStackTrace();
-                }
+            try {
+                sDAO.update(s);
+                this.fillTable();
+                this.clearForm();
+                MsgBox.alert(this, "Cập nhật thành công!");
+            } catch (Exception e) {
+                MsgBox.alert(this, "Cập nhật thất bại!");
+                e.printStackTrace();
             }
         }
 
@@ -224,6 +230,50 @@ public class QuanlySach extends javax.swing.JFrame {
                 MsgBox.alert(this, "Xóa thất bại!");
                 e.printStackTrace();
             }
+        }
+    }
+
+    void first() {
+        this.row = 0;
+        this.edit();
+        this.updateInfo();
+    }
+
+    void next() {
+        if (this.row < tblQuanLySach.getRowCount() - 1) {
+            this.row++;
+            this.edit();
+            this.updateInfo();
+        }
+    }
+
+    void prev() {
+        if (this.row > 0) {
+            this.row--;
+            this.edit();
+            this.updateInfo();
+        }
+    }
+
+    void last() {
+        this.row = tblQuanLySach.getRowCount() - 1;
+        this.edit();
+        this.updateInfo();
+    }
+
+    void updateInfo() {
+        tblQuanLySach.setRowSelectionInterval(row, row);
+        this.edit();
+//        lblBanGhi.setText(ThongTinBanGhi());
+    }
+
+    void chooseImage() {
+        if (fileChooser.showOpenDialog(this) == JFileChooser.APPROVE_OPTION) {
+            File file = fileChooser.getSelectedFile();
+            XImage.save(file);
+            ImageIcon icon = XImage.read(file.getName());
+            lblAnh.setIcon(icon);
+            lblAnh.setToolTipText(file.getName());
         }
     }
 
@@ -312,15 +362,28 @@ public class QuanlySach extends javax.swing.JFrame {
 
         tblQuanLySach.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
-                {null, null, null, null},
-                {null, null, null, null},
-                {null, null, null, null},
-                {null, null, null, null}
+                {null, null, null, null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null, null, null, null}
             },
             new String [] {
-                "Title 1", "Title 2", "Title 3", "Title 4"
+                "Title 1", "Title 2", "Title 3", "Title 4", "null", "null", "null", "null", "null", "null"
             }
-        ));
+        ) {
+            boolean[] canEdit = new boolean [] {
+                false, false, false, false, false, false, false, false, false, false
+            };
+
+            public boolean isCellEditable(int rowIndex, int columnIndex) {
+                return canEdit [columnIndex];
+            }
+        });
+        tblQuanLySach.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                tblQuanLySachMouseClicked(evt);
+            }
+        });
         jScrollPane1.setViewportView(tblQuanLySach);
 
         jPanel1.add(jScrollPane1, new org.netbeans.lib.awtextra.AbsoluteConstraints(80, 140, 610, 220));
@@ -336,6 +399,11 @@ public class QuanlySach extends javax.swing.JFrame {
         jButton2.setBackground(new java.awt.Color(117, 76, 36));
         jButton2.setForeground(new java.awt.Color(255, 206, 41));
         jButton2.setText("XÓA");
+        jButton2.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton2ActionPerformed(evt);
+            }
+        });
         jPanel1.add(jButton2, new org.netbeans.lib.awtextra.AbsoluteConstraints(590, 390, 90, 40));
         jPanel1.add(jLabel12, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 0, -1, -1));
 
@@ -356,18 +424,38 @@ public class QuanlySach extends javax.swing.JFrame {
 
         jButton8.setIcon(new javax.swing.ImageIcon(getClass().getResource("/quanlythuvien/icon/First.png"))); // NOI18N
         jButton8.setBorderPainted(false);
+        jButton8.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton8ActionPerformed(evt);
+            }
+        });
         jPanel1.add(jButton8, new org.netbeans.lib.awtextra.AbsoluteConstraints(110, 380, 32, 32));
 
         jButton9.setIcon(new javax.swing.ImageIcon(getClass().getResource("/quanlythuvien/icon/Prev.png"))); // NOI18N
         jButton9.setBorderPainted(false);
+        jButton9.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton9ActionPerformed(evt);
+            }
+        });
         jPanel1.add(jButton9, new org.netbeans.lib.awtextra.AbsoluteConstraints(180, 380, 32, 32));
 
         jButton10.setIcon(new javax.swing.ImageIcon(getClass().getResource("/quanlythuvien/icon/Next.png"))); // NOI18N
         jButton10.setBorderPainted(false);
+        jButton10.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton10ActionPerformed(evt);
+            }
+        });
         jPanel1.add(jButton10, new org.netbeans.lib.awtextra.AbsoluteConstraints(250, 380, 32, 32));
 
         jButton11.setIcon(new javax.swing.ImageIcon(getClass().getResource("/quanlythuvien/icon/Last.png"))); // NOI18N
         jButton11.setBorderPainted(false);
+        jButton11.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton11ActionPerformed(evt);
+            }
+        });
         jPanel1.add(jButton11, new org.netbeans.lib.awtextra.AbsoluteConstraints(320, 380, 32, 32));
 
         jLabel1.setIcon(new javax.swing.ImageIcon("D:\\DuAn1\\QuanLyThuVien\\QuanLyThuVien\\src\\quanlythuvien\\icon\\FiveO - ELib Low Opacity.png")); // NOI18N
@@ -455,7 +543,7 @@ public class QuanlySach extends javax.swing.JFrame {
         jButton6.setBackground(new java.awt.Color(117, 76, 36));
         jButton6.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
         jButton6.setForeground(new java.awt.Color(255, 206, 41));
-        jButton6.setText("TRỞ LẠI");
+        jButton6.setText("REFRESH");
         jButton6.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jButton6ActionPerformed(evt);
@@ -476,18 +564,38 @@ public class QuanlySach extends javax.swing.JFrame {
 
         jButton12.setIcon(new javax.swing.ImageIcon(getClass().getResource("/quanlythuvien/icon/First.png"))); // NOI18N
         jButton12.setBorderPainted(false);
+        jButton12.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton12ActionPerformed(evt);
+            }
+        });
         jPanel2.add(jButton12, new org.netbeans.lib.awtextra.AbsoluteConstraints(230, 330, 32, 32));
 
         jButton13.setIcon(new javax.swing.ImageIcon(getClass().getResource("/quanlythuvien/icon/Prev.png"))); // NOI18N
         jButton13.setBorderPainted(false);
+        jButton13.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton13ActionPerformed(evt);
+            }
+        });
         jPanel2.add(jButton13, new org.netbeans.lib.awtextra.AbsoluteConstraints(280, 330, 32, 32));
 
         jButton14.setIcon(new javax.swing.ImageIcon(getClass().getResource("/quanlythuvien/icon/Next.png"))); // NOI18N
         jButton14.setBorderPainted(false);
+        jButton14.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton14ActionPerformed(evt);
+            }
+        });
         jPanel2.add(jButton14, new org.netbeans.lib.awtextra.AbsoluteConstraints(330, 330, 32, 32));
 
         jButton15.setIcon(new javax.swing.ImageIcon(getClass().getResource("/quanlythuvien/icon/Last.png"))); // NOI18N
         jButton15.setBorderPainted(false);
+        jButton15.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton15ActionPerformed(evt);
+            }
+        });
         jPanel2.add(jButton15, new org.netbeans.lib.awtextra.AbsoluteConstraints(380, 330, 32, 32));
 
         jLabel6.setIcon(new javax.swing.ImageIcon("D:\\DuAn1\\QuanLyThuVien\\QuanLyThuVien\\src\\quanlythuvien\\icon\\FiveO - ELib Low Opacity.png")); // NOI18N
@@ -530,21 +638,95 @@ public class QuanlySach extends javax.swing.JFrame {
 
     private void jButton4ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton4ActionPerformed
         // TODO add your handling code here:
-//        chooseImage();
+        chooseImage();
     }//GEN-LAST:event_jButton4ActionPerformed
 
     private void jButton5ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton5ActionPerformed
         // TODO add your handling code here:
-//        insert();
+        this.insert();
+        this.clearForm();
     }//GEN-LAST:event_jButton5ActionPerformed
 
     private void jButton6ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton6ActionPerformed
         // TODO add your handling code here:
+        this.clearForm();
     }//GEN-LAST:event_jButton6ActionPerformed
 
     private void jButton7ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton7ActionPerformed
         // TODO add your handling code here:
+        this.update();
+        this.clearForm();
     }//GEN-LAST:event_jButton7ActionPerformed
+
+    private void tblQuanLySachMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_tblQuanLySachMouseClicked
+        // TODO add your handling code here:
+        if (evt.getClickCount() == 2) {
+            this.row = tblQuanLySach.getSelectedRow();
+            String maSach = (String) tblQuanLySach.getValueAt(this.row, 0);
+            Sach s = sDAO.selectById(maSach);
+            this.setForm(s);;
+            tabs.setSelectedIndex(1);
+        }
+    }//GEN-LAST:event_tblQuanLySachMouseClicked
+
+    private void jButton8ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton8ActionPerformed
+        // TODO add your handling code here:
+        this.first();
+    }//GEN-LAST:event_jButton8ActionPerformed
+
+    private void jButton9ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton9ActionPerformed
+        // TODO add your handling code here:
+        this.prev();
+    }//GEN-LAST:event_jButton9ActionPerformed
+
+    private void jButton10ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton10ActionPerformed
+        // TODO add your handling code here:
+        this.next();
+    }//GEN-LAST:event_jButton10ActionPerformed
+
+    private void jButton11ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton11ActionPerformed
+        // TODO add your handling code here:
+        this.last();
+    }//GEN-LAST:event_jButton11ActionPerformed
+
+    private void jButton12ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton12ActionPerformed
+        // TODO add your handling code here:
+        this.first();
+    }//GEN-LAST:event_jButton12ActionPerformed
+
+    private void jButton13ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton13ActionPerformed
+        // TODO add your handling code here:
+        this.prev();
+    }//GEN-LAST:event_jButton13ActionPerformed
+
+    private void jButton14ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton14ActionPerformed
+        // TODO add your handling code here:
+        this.next();
+    }//GEN-LAST:event_jButton14ActionPerformed
+
+    private void jButton15ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton15ActionPerformed
+        // TODO add your handling code here:
+        this.last();
+    }//GEN-LAST:event_jButton15ActionPerformed
+
+    private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
+        // TODO add your handling code here:
+
+        this.row = tblQuanLySach.getSelectedRow();
+        String maSach = (String) tblQuanLySach.getValueAt(this.row, 0);
+        Sach s = sDAO.selectById(maSach);
+        if (MsgBox.confirm(this, "Bạn có chắc chắn xóa Sách này ?")) {
+            try {
+                sDAO.delete(maSach);
+                this.fillTable();
+                this.clearForm();
+                MsgBox.alert(this, "Xóa thành công!");
+            } catch (Exception e) {
+                MsgBox.alert(this, "Xóa thất bại!");
+                e.printStackTrace();
+            }
+        }
+    }//GEN-LAST:event_jButton2ActionPerformed
 
     /**
      * @param args the command line arguments
