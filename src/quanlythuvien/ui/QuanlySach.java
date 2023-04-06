@@ -4,6 +4,8 @@
  */
 package quanlythuvien.ui;
 
+import java.awt.Color;
+import java.awt.Font;
 import java.io.File;
 import java.sql.Connection;
 import java.sql.DriverManager;
@@ -332,9 +334,9 @@ public class QuanlySach extends javax.swing.JFrame {
         txtSoLuong = new javax.swing.JTextField();
         lblAnh = new javax.swing.JLabel();
         jButton4 = new javax.swing.JButton();
-        jButton5 = new javax.swing.JButton();
+        btnSave = new javax.swing.JButton();
         jButton6 = new javax.swing.JButton();
-        jButton7 = new javax.swing.JButton();
+        btnUpdate = new javax.swing.JButton();
         jButton12 = new javax.swing.JButton();
         jButton13 = new javax.swing.JButton();
         jButton14 = new javax.swing.JButton();
@@ -529,16 +531,16 @@ public class QuanlySach extends javax.swing.JFrame {
         });
         jPanel2.add(jButton4, new org.netbeans.lib.awtextra.AbsoluteConstraints(570, 250, -1, -1));
 
-        jButton5.setBackground(new java.awt.Color(117, 76, 36));
-        jButton5.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
-        jButton5.setForeground(new java.awt.Color(255, 206, 41));
-        jButton5.setText("SAVE");
-        jButton5.addActionListener(new java.awt.event.ActionListener() {
+        btnSave.setBackground(new java.awt.Color(117, 76, 36));
+        btnSave.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
+        btnSave.setForeground(new java.awt.Color(255, 206, 41));
+        btnSave.setText("SAVE");
+        btnSave.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jButton5ActionPerformed(evt);
+                btnSaveActionPerformed(evt);
             }
         });
-        jPanel2.add(jButton5, new org.netbeans.lib.awtextra.AbsoluteConstraints(120, 390, 140, 30));
+        jPanel2.add(btnSave, new org.netbeans.lib.awtextra.AbsoluteConstraints(120, 390, 140, 30));
 
         jButton6.setBackground(new java.awt.Color(117, 76, 36));
         jButton6.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
@@ -551,16 +553,16 @@ public class QuanlySach extends javax.swing.JFrame {
         });
         jPanel2.add(jButton6, new org.netbeans.lib.awtextra.AbsoluteConstraints(440, 390, 140, 30));
 
-        jButton7.setBackground(new java.awt.Color(117, 76, 36));
-        jButton7.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
-        jButton7.setForeground(new java.awt.Color(255, 206, 41));
-        jButton7.setText("UPDATE");
-        jButton7.addActionListener(new java.awt.event.ActionListener() {
+        btnUpdate.setBackground(new java.awt.Color(117, 76, 36));
+        btnUpdate.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
+        btnUpdate.setForeground(new java.awt.Color(255, 206, 41));
+        btnUpdate.setText("UPDATE");
+        btnUpdate.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jButton7ActionPerformed(evt);
+                btnUpdateActionPerformed(evt);
             }
         });
-        jPanel2.add(jButton7, new org.netbeans.lib.awtextra.AbsoluteConstraints(280, 390, 140, 30));
+        jPanel2.add(btnUpdate, new org.netbeans.lib.awtextra.AbsoluteConstraints(280, 390, 140, 30));
 
         jButton12.setIcon(new javax.swing.ImageIcon(getClass().getResource("/quanlythuvien/icon/First.png"))); // NOI18N
         jButton12.setBorderPainted(false);
@@ -641,22 +643,23 @@ public class QuanlySach extends javax.swing.JFrame {
         chooseImage();
     }//GEN-LAST:event_jButton4ActionPerformed
 
-    private void jButton5ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton5ActionPerformed
+    private void btnSaveActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnSaveActionPerformed
         // TODO add your handling code here:
         this.insert();
         this.clearForm();
-    }//GEN-LAST:event_jButton5ActionPerformed
+    }//GEN-LAST:event_btnSaveActionPerformed
 
     private void jButton6ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton6ActionPerformed
         // TODO add your handling code here:
         this.clearForm();
+        this.editText1();
     }//GEN-LAST:event_jButton6ActionPerformed
 
-    private void jButton7ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton7ActionPerformed
+    private void btnUpdateActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnUpdateActionPerformed
         // TODO add your handling code here:
         this.update();
         this.clearForm();
-    }//GEN-LAST:event_jButton7ActionPerformed
+    }//GEN-LAST:event_btnUpdateActionPerformed
 
     private void tblQuanLySachMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_tblQuanLySachMouseClicked
         // TODO add your handling code here:
@@ -665,6 +668,7 @@ public class QuanlySach extends javax.swing.JFrame {
             String maSach = (String) tblQuanLySach.getValueAt(this.row, 0);
             Sach s = sDAO.selectById(maSach);
             this.setForm(s);;
+            this.editText();
             tabs.setSelectedIndex(1);
         }
     }//GEN-LAST:event_tblQuanLySachMouseClicked
@@ -765,6 +769,8 @@ public class QuanlySach extends javax.swing.JFrame {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JButton btnSave;
+    private javax.swing.JButton btnUpdate;
     private javax.swing.JComboBox<String> cboNXB;
     private javax.swing.JComboBox<String> cboNgonNgu;
     private javax.swing.JComboBox<String> cboTheLoai;
@@ -778,9 +784,7 @@ public class QuanlySach extends javax.swing.JFrame {
     private javax.swing.JButton jButton2;
     private javax.swing.JButton jButton3;
     private javax.swing.JButton jButton4;
-    private javax.swing.JButton jButton5;
     private javax.swing.JButton jButton6;
-    private javax.swing.JButton jButton7;
     private javax.swing.JButton jButton8;
     private javax.swing.JButton jButton9;
     private javax.swing.JLabel jLabel1;
@@ -878,6 +882,29 @@ public class QuanlySach extends javax.swing.JFrame {
         }
 
         return true;
+    }
+    
+    void editText(){
+        boolean edit = (this.row >= 0);
+        Font f = new Font(Font.SANS_SERIF,Font.BOLD,18);        
+        txtMaS.setEditable(!edit);
+        txtTenS.setEditable(!edit);
+        btnSave.setEnabled(!edit);
+        txtMaS.setFont(f);
+        txtTenS.setFont(f);
+        txtMaS.setForeground(Color.red);
+        txtTenS.setForeground(Color.red);
+    }
+        void editText1(){
+        boolean edit = (this.row >= 0);
+        Font f = new Font(Font.SANS_SERIF,Font.PLAIN,12); 
+        txtMaS.setEditable(edit);
+        txtTenS.setEditable(edit);
+        btnSave.setEnabled(edit);
+        txtMaS.setFont(f);
+        txtTenS.setFont(f);
+        txtMaS.setForeground(Color.black);
+        txtTenS.setForeground(Color.black);
     }
 
 }
