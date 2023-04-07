@@ -145,6 +145,21 @@ public class QuanlySach extends javax.swing.JFrame {
         return sa;
     }
 
+    Sach getFormUp() {
+        Sach sa = new Sach();
+        sa.setID(Integer.parseInt(txtMaS.getText()));
+        sa.setTenSach(txtTenS.getText());
+        sa.setTenTacGia(txtTacGia.getText());
+        sa.setNXB(cboNXB.getSelectedItem().toString());
+        sa.setTheLoai(cboTheLoai.getSelectedItem().toString());
+        sa.setNgonNgu(cboNgonNgu.getSelectedItem().toString());
+        sa.setDonGia(Double.parseDouble(txtDonGia.getText()));
+        sa.setViTri(txtViTri.getText());
+        sa.setSoLuong(Integer.parseInt(txtSoLuong.getText()));
+        sa.setAnh(lblAnh.getToolTipText());
+        return sa;
+    }
+
     void edit() {
         int id = (int) tblQuanLySach.getValueAt(this.row, 0);
         Sach s = sDAO.selectById(id);
@@ -202,7 +217,7 @@ public class QuanlySach extends javax.swing.JFrame {
             MsgBox.alert(this, "Vui lòng nhập Đơn giá");
             txtDonGia.requestFocus();
         } else {
-            Sach s = getForm();
+            Sach s = getFormUp();
             try {
                 sDAO.update(s);
                 this.fillTable();
@@ -863,11 +878,12 @@ public class QuanlySach extends javax.swing.JFrame {
 
     private void cboDSHienThiActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cboDSHienThiActionPerformed
         // TODO add your handling code here:
-        if(cboDSHienThi.getSelectedIndex() == 1){
+        if (cboDSHienThi.getSelectedIndex() == 1) {
             this.fillTable();
-        }else{
+        } else {
 //            this.chonTheLoai();
             this.fill();
+            this.row = 0;
         }
     }//GEN-LAST:event_cboDSHienThiActionPerformed
 
@@ -1047,13 +1063,13 @@ public class QuanlySach extends javax.swing.JFrame {
         txtTenS.setForeground(Color.black);
     }
 
-        void fill(){
-                DefaultTableModel model = (DefaultTableModel) tblQuanLySach.getModel();
+    void fill() {
+        DefaultTableModel model = (DefaultTableModel) tblQuanLySach.getModel();
         model.setRowCount(0);
         try {
             String loai = (String) cboDSHienThi.getSelectedItem();
             List<Sach> list = sDAO.selectByTheLoai(loai);
-             for (Sach s : list) {
+            for (Sach s : list) {
                 Object[] row = {
                     s.getID(),
                     s.getTenSach(),
@@ -1072,10 +1088,10 @@ public class QuanlySach extends javax.swing.JFrame {
             MsgBox.alert(this, "Lỗi truy vấn dữ liệu!");
             e.printStackTrace();
         }
-        }
-        void chonTheLoai(){
-            Sach s = (Sach) cboDSHienThi.getSelectedItem();
-            this.fill();
-            this.row = 0;
-        }
+    }
+//        void chonTheLoai(){
+//            Sach s = (Sach) cboDSHienThi.getSelectedItem();
+//            this.fill();
+//            this.row = 0;
+//        }
 }

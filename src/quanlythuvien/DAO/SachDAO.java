@@ -17,7 +17,7 @@ public class SachDAO extends ElibDAO<Sach, String> {
 
     @Override
     public void insert(Sach entity) {
-        JDBCHelper.update(INSERT_SQL,  entity.getTenSach(), entity.getTenTacGia(), entity.getNXB(), entity.getTheLoai(), entity.getNgonNgu(), entity.getDonGia(), entity.getViTri(), entity.getSoLuong(), entity.getAnh());
+        JDBCHelper.update(INSERT_SQL, entity.getTenSach(), entity.getTenTacGia(), entity.getNXB(), entity.getTheLoai(), entity.getNgonNgu(), entity.getDonGia(), entity.getViTri(), entity.getSoLuong(), entity.getAnh());
     }
 
     @Override
