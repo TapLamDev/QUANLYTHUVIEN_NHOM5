@@ -2,7 +2,8 @@ package quanlythuvien.entity;
 
 public class Sach {
 
-    private String MaSach;
+//    private String MaSach;
+    private int ID;
     private String TenSach;
     private String TenTacGia;
     private String NXB;
@@ -16,8 +17,8 @@ public class Sach {
     public Sach() {
     }
 
-    public Sach(String MaSach, String TenSach, String TenTacGia, String NXB, String TheLoai, String NgonNgu, double DonGia, String ViTri, int SoLuong, String Anh) {
-        this.MaSach = MaSach;
+    public Sach(int ID, String TenSach, String TenTacGia, String NXB, String TheLoai, String NgonNgu, double DonGia, String ViTri, int SoLuong, String Anh) {
+        this.ID = ID;
         this.TenSach = TenSach;
         this.TenTacGia = TenTacGia;
         this.NXB = NXB;
@@ -29,12 +30,12 @@ public class Sach {
         this.Anh = Anh;
     }
 
-    public String getMaSach() {
-        return MaSach;
+    public int getID() {
+        return ID;
     }
 
-    public void setMaSach(String MaSach) {
-        this.MaSach = MaSach;
+    public void setID(int ID) {
+        this.ID = ID;
     }
 
     public String getTenSach() {
@@ -109,4 +110,5 @@ public class Sach {
         this.Anh = Anh;
     }
 
+   
 }

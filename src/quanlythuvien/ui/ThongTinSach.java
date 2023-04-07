@@ -103,7 +103,7 @@ public class ThongTinSach extends javax.swing.JFrame {
     }
 
     void setForm(Sach sa) {
-        txtMaS.setText(sa.getMaSach());
+//        txtMaS.setText(sa.getMaSach());
         txtTenS.setText(sa.getTenSach());
         txtTacGia.setText(sa.getTenTacGia());
         cboNXB.setSelectedItem(sa.getNXB());
@@ -121,7 +121,7 @@ public class ThongTinSach extends javax.swing.JFrame {
 
     Sach getForm() {
         Sach sa = new Sach();
-        sa.setMaSach(txtMaS.getText());
+//        sa.setMaSach(txtMaS.getText());
         sa.setTenSach(txtTenS.getText());
         sa.setTenTacGia(txtTacGia.getText());
         sa.setNXB(cboNXB.getSelectedItem().toString());

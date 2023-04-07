@@ -46,7 +46,7 @@ public class QuanlySach extends javax.swing.JFrame {
 
     public void initTable() {
         tblModel = (DefaultTableModel) tblQuanLySach.getModel();
-        String[] nav = new String[]{"Mã Sách", "Tên Sách", "Tác Giả", "NXB", "Thể Loại", "Ngôn Ngữ", "Đơn Giá", "Vị Trí", "Số Lượng", "Ảnh"};
+        String[] nav = new String[]{"ID", "Tên Sách", "Tác Giả", "NXB", "Thể Loại", "Ngôn Ngữ", "Đơn Giá", "Vị Trí", "Số Lượng", "Ảnh"};
         tblModel.setColumnIdentifiers(nav);
     }
 
@@ -58,6 +58,7 @@ public class QuanlySach extends javax.swing.JFrame {
             ResultSet rs = stmt.executeQuery(sql);
             while (rs.next()) {
                 cboTheLoai.addItem(rs.getString(1));
+                cboDSHienThi.addItem(rs.getString(1));
             }
 
         } // Handle any errors that may have occurred.
@@ -113,7 +114,7 @@ public class QuanlySach extends javax.swing.JFrame {
     }
 
     void setForm(Sach sa) {
-        txtMaS.setText(sa.getMaSach());
+        txtMaS.setText(String.valueOf(sa.getID()));
         txtTenS.setText(sa.getTenSach());
         txtTacGia.setText(sa.getTenTacGia());
         cboNXB.setSelectedItem(sa.getNXB());
@@ -131,7 +132,7 @@ public class QuanlySach extends javax.swing.JFrame {
 
     Sach getForm() {
         Sach sa = new Sach();
-        sa.setMaSach(txtMaS.getText());
+//        sa.setID(Integer.parseInt(txtMaS.getText()));
         sa.setTenSach(txtTenS.getText());
         sa.setTenTacGia(txtTacGia.getText());
         sa.setNXB(cboNXB.getSelectedItem().toString());
@@ -145,8 +146,8 @@ public class QuanlySach extends javax.swing.JFrame {
     }
 
     void edit() {
-        String maSach = (String) tblQuanLySach.getValueAt(this.row, 0);
-        Sach s = sDAO.selectById(maSach);
+        int id = (int) tblQuanLySach.getValueAt(this.row, 0);
+        Sach s = sDAO.selectById(id);
         this.setForm(s);
 
     }
@@ -158,7 +159,7 @@ public class QuanlySach extends javax.swing.JFrame {
             List<Sach> list = sDAO.selectAll();
             for (Sach s : list) {
                 Object[] row = {
-                    s.getMaSach(),
+                    s.getID(),
                     s.getTenSach(),
                     s.getTenTacGia(),
                     s.getNXB(),
@@ -178,26 +179,22 @@ public class QuanlySach extends javax.swing.JFrame {
     }
 
     void insert() {
-        if (txtDonGia.getText().equals("")) {
-            MsgBox.alert(this, "Vui lòng nhập Đơn giá");
-            txtDonGia.requestFocus();
-        } else {
-            Sach s = getForm();
-            if (validates() == false) {
 
-            } else {
-                try {
-                    sDAO.insert(s);
-                    this.fillTable();
-                    this.clearForm();
-                    txtMaS.requestFocus();
-                    MsgBox.alert(this, "Thêm mới thành công!");
-                } catch (Exception e) {
-                    MsgBox.alert(this, "Thêm mới thất bại!");
-                    e.printStackTrace();
-                }
+        if (validates()) {
+
+            try {
+                Sach s = getForm();
+                sDAO.insert(s);
+                this.fillTable();
+                this.clearForm();
+//                txtMaS.requestFocus();
+                MsgBox.alert(this, "Thêm mới thành công!");
+            } catch (Exception e) {
+                MsgBox.alert(this, "Thêm mới thất bại!");
+                e.printStackTrace();
             }
         }
+
     }
 
     void update() {
@@ -221,10 +218,10 @@ public class QuanlySach extends javax.swing.JFrame {
 
     void delete() {
 
-        String maSach = txtMaS.getText();
+        int id = Integer.parseInt(txtMaS.getText());
         if (MsgBox.confirm(this, "Bạn có chắc chắn xóa Sách này ?")) {
             try {
-                sDAO.delete(maSach);
+                sDAO.delete(id);
                 this.fillTable();
                 this.clearForm();
                 MsgBox.alert(this, "Xóa thành công!");
@@ -269,6 +266,40 @@ public class QuanlySach extends javax.swing.JFrame {
 //        lblBanGhi.setText(ThongTinBanGhi());
     }
 
+    void timSach() {
+
+        if (txtTimKiem.getText().equalsIgnoreCase("")) {
+            MsgBox.alert(this, "Vui lòng nhập sách cần tìm!");
+        } else {
+            DefaultTableModel model = (DefaultTableModel) tblQuanLySach.getModel();
+            model.setRowCount(0);
+            try {
+                String timKiem = txtTimKiem.getText();
+                List<Sach> list = sDAO.selectByKeyword(timKiem);
+                for (Sach s : list) {
+                    Object[] row = {
+                        s.getID(),
+                        s.getTenSach(),
+                        s.getTenTacGia(),
+                        s.getNXB(),
+                        s.getTheLoai(),
+                        s.getNgonNgu(),
+                        s.getDonGia(),
+                        s.getViTri(),
+                        s.getSoLuong(),
+                        s.getAnh()
+                    };
+                    model.addRow(row);
+                }
+            } catch (Exception e) {
+                MsgBox.alert(this, "Lỗi truy vấn dữ liệu!");
+                e.printStackTrace();
+            }
+
+        }
+
+    }
+
     void chooseImage() {
         if (fileChooser.showOpenDialog(this) == JFileChooser.APPROVE_OPTION) {
             File file = fileChooser.getSelectedFile();
@@ -288,6 +319,7 @@ public class QuanlySach extends javax.swing.JFrame {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
+        jPanel3 = new javax.swing.JPanel();
         tabs = new javax.swing.JTabbedPane();
         jToolBar1 = new javax.swing.JToolBar();
         jPanel1 = new javax.swing.JPanel();
@@ -309,8 +341,9 @@ public class QuanlySach extends javax.swing.JFrame {
         jButton9 = new javax.swing.JButton();
         jButton10 = new javax.swing.JButton();
         jButton11 = new javax.swing.JButton();
-        jLabel1 = new javax.swing.JLabel();
         jLabel4 = new javax.swing.JLabel();
+        cboDSHienThi = new javax.swing.JComboBox<>();
+        jLabel1 = new javax.swing.JLabel();
         jToolBar2 = new javax.swing.JToolBar();
         jPanel2 = new javax.swing.JPanel();
         jLabel10 = new javax.swing.JLabel();
@@ -331,22 +364,38 @@ public class QuanlySach extends javax.swing.JFrame {
         jLabel19 = new javax.swing.JLabel();
         txtViTri = new javax.swing.JTextField();
         jLabel20 = new javax.swing.JLabel();
-        txtSoLuong = new javax.swing.JTextField();
         lblAnh = new javax.swing.JLabel();
+        txtSoLuong = new javax.swing.JTextField();
         jButton4 = new javax.swing.JButton();
         btnSave = new javax.swing.JButton();
-        jButton6 = new javax.swing.JButton();
+        btnRE = new javax.swing.JButton();
         btnUpdate = new javax.swing.JButton();
         jButton12 = new javax.swing.JButton();
         jButton13 = new javax.swing.JButton();
         jButton14 = new javax.swing.JButton();
         jButton15 = new javax.swing.JButton();
         jLabel6 = new javax.swing.JLabel();
+        jPanel4 = new javax.swing.JPanel();
+        jLabel25 = new javax.swing.JLabel();
+        jLabel3 = new javax.swing.JLabel();
+        jLabel26 = new javax.swing.JLabel();
+        jLabel24 = new javax.swing.JLabel();
         jLabel7 = new javax.swing.JLabel();
         jMenuBar1 = new javax.swing.JMenuBar();
         jMenu1 = new javax.swing.JMenu();
         jMenu2 = new javax.swing.JMenu();
         jMenu3 = new javax.swing.JMenu();
+
+        javax.swing.GroupLayout jPanel3Layout = new javax.swing.GroupLayout(jPanel3);
+        jPanel3.setLayout(jPanel3Layout);
+        jPanel3Layout.setHorizontalGroup(
+            jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGap(0, 100, Short.MAX_VALUE)
+        );
+        jPanel3Layout.setVerticalGroup(
+            jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGap(0, 100, Short.MAX_VALUE)
+        );
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
@@ -358,9 +407,13 @@ public class QuanlySach extends javax.swing.JFrame {
         jLabel2.setText("TÌM SÁCH");
         jPanel1.add(jLabel2, new org.netbeans.lib.awtextra.AbsoluteConstraints(310, 30, -1, -1));
 
-        txtTimKiem.setText(" Nhập sách cần tìm...");
         txtTimKiem.setBorder(new javax.swing.border.LineBorder(new java.awt.Color(0, 0, 0), 1, true));
-        jPanel1.add(txtTimKiem, new org.netbeans.lib.awtextra.AbsoluteConstraints(140, 90, 310, 30));
+        txtTimKiem.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                txtTimKiemActionPerformed(evt);
+            }
+        });
+        jPanel1.add(txtTimKiem, new org.netbeans.lib.awtextra.AbsoluteConstraints(140, 90, 170, 30));
 
         tblQuanLySach.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
@@ -395,7 +448,7 @@ public class QuanlySach extends javax.swing.JFrame {
 
         jButton3.setBackground(new java.awt.Color(117, 76, 36));
         jButton3.setForeground(new java.awt.Color(255, 206, 41));
-        jButton3.setText("CẬP NHẬT");
+        jButton3.setText("QUAY LẠI");
         jPanel1.add(jButton3, new org.netbeans.lib.awtextra.AbsoluteConstraints(460, 390, 110, 40));
 
         jButton2.setBackground(new java.awt.Color(117, 76, 36));
@@ -419,10 +472,15 @@ public class QuanlySach extends javax.swing.JFrame {
         jPanel1.add(jLabel23, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 280, -1, -1));
 
         jButton1.setBackground(new java.awt.Color(255, 255, 255));
-        jButton1.setIcon(new javax.swing.ImageIcon(getClass().getResource("/quanlythuvien/icon/search 2 2.png"))); // NOI18N
+        jButton1.setIcon(new javax.swing.ImageIcon(getClass().getResource("/quanlythuvien/icon/search3.png"))); // NOI18N
         jButton1.setBorderPainted(false);
         jButton1.setFocusPainted(false);
-        jPanel1.add(jButton1, new org.netbeans.lib.awtextra.AbsoluteConstraints(470, 70, 60, 60));
+        jButton1.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton1ActionPerformed(evt);
+            }
+        });
+        jPanel1.add(jButton1, new org.netbeans.lib.awtextra.AbsoluteConstraints(320, 90, 40, 30));
 
         jButton8.setIcon(new javax.swing.ImageIcon(getClass().getResource("/quanlythuvien/icon/First.png"))); // NOI18N
         jButton8.setBorderPainted(false);
@@ -460,11 +518,19 @@ public class QuanlySach extends javax.swing.JFrame {
         });
         jPanel1.add(jButton11, new org.netbeans.lib.awtextra.AbsoluteConstraints(320, 380, 32, 32));
 
-        jLabel1.setIcon(new javax.swing.ImageIcon("D:\\DuAn1\\QuanLyThuVien\\QuanLyThuVien\\src\\quanlythuvien\\icon\\FiveO - ELib Low Opacity.png")); // NOI18N
-        jPanel1.add(jLabel1, new org.netbeans.lib.awtextra.AbsoluteConstraints(220, 0, 500, 438));
-
         jLabel4.setIcon(new javax.swing.ImageIcon("D:\\DuAn1\\QuanLyThuVien\\QuanLyThuVien\\src\\quanlythuvien\\icon\\FiveO - ELib Low Opacity.png")); // NOI18N
         jPanel1.add(jLabel4, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 0, 500, 438));
+
+        cboDSHienThi.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Hiển Thị Theo", "ALL" }));
+        cboDSHienThi.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                cboDSHienThiActionPerformed(evt);
+            }
+        });
+        jPanel1.add(cboDSHienThi, new org.netbeans.lib.awtextra.AbsoluteConstraints(530, 90, 130, -1));
+
+        jLabel1.setIcon(new javax.swing.ImageIcon("D:\\DuAn1\\QuanLyThuVien\\QuanLyThuVien\\src\\quanlythuvien\\icon\\FiveO - ELib Low Opacity.png")); // NOI18N
+        jPanel1.add(jLabel1, new org.netbeans.lib.awtextra.AbsoluteConstraints(220, 0, 500, 438));
 
         jToolBar1.add(jPanel1);
 
@@ -478,9 +544,11 @@ public class QuanlySach extends javax.swing.JFrame {
         jLabel10.setText("THÔNG TIN SÁCH");
         jPanel2.add(jLabel10, new org.netbeans.lib.awtextra.AbsoluteConstraints(250, 10, 210, -1));
 
-        jLabel11.setText("Mã sách:");
+        jLabel11.setText("ID:");
         jPanel2.add(jLabel11, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 60, -1, -1));
-        jPanel2.add(txtMaS, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 80, 210, -1));
+
+        txtMaS.setEditable(false);
+        jPanel2.add(txtMaS, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 80, 50, -1));
 
         jLabel13.setText("Tên sách:");
         jPanel2.add(jLabel13, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 110, -1, -1));
@@ -518,10 +586,11 @@ public class QuanlySach extends javax.swing.JFrame {
 
         jLabel20.setText("Số Lượng:");
         jPanel2.add(jLabel20, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 260, -1, -1));
-        jPanel2.add(txtSoLuong, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 280, 210, -1));
 
+        lblAnh.setIcon(new javax.swing.ImageIcon(getClass().getResource("/quanlythuvien/icon/FiveO - ELib Low Opacity.png"))); // NOI18N
         lblAnh.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
-        jPanel2.add(lblAnh, new org.netbeans.lib.awtextra.AbsoluteConstraints(550, 70, 130, 160));
+        jPanel2.add(lblAnh, new org.netbeans.lib.awtextra.AbsoluteConstraints(560, 70, 110, 160));
+        jPanel2.add(txtSoLuong, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 280, 210, -1));
 
         jButton4.setText("Chọn Ảnh");
         jButton4.addActionListener(new java.awt.event.ActionListener() {
@@ -542,16 +611,16 @@ public class QuanlySach extends javax.swing.JFrame {
         });
         jPanel2.add(btnSave, new org.netbeans.lib.awtextra.AbsoluteConstraints(120, 390, 140, 30));
 
-        jButton6.setBackground(new java.awt.Color(117, 76, 36));
-        jButton6.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
-        jButton6.setForeground(new java.awt.Color(255, 206, 41));
-        jButton6.setText("REFRESH");
-        jButton6.addActionListener(new java.awt.event.ActionListener() {
+        btnRE.setBackground(new java.awt.Color(117, 76, 36));
+        btnRE.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
+        btnRE.setForeground(new java.awt.Color(255, 206, 41));
+        btnRE.setText("REFRESH");
+        btnRE.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jButton6ActionPerformed(evt);
+                btnREActionPerformed(evt);
             }
         });
-        jPanel2.add(jButton6, new org.netbeans.lib.awtextra.AbsoluteConstraints(440, 390, 140, 30));
+        jPanel2.add(btnRE, new org.netbeans.lib.awtextra.AbsoluteConstraints(440, 390, 140, 30));
 
         btnUpdate.setBackground(new java.awt.Color(117, 76, 36));
         btnUpdate.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
@@ -603,6 +672,49 @@ public class QuanlySach extends javax.swing.JFrame {
         jLabel6.setIcon(new javax.swing.ImageIcon("D:\\DuAn1\\QuanLyThuVien\\QuanLyThuVien\\src\\quanlythuvien\\icon\\FiveO - ELib Low Opacity.png")); // NOI18N
         jPanel2.add(jLabel6, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 0, 500, 438));
 
+        jPanel4.setBackground(new java.awt.Color(0, 0, 0));
+
+        jLabel25.setForeground(new java.awt.Color(255, 206, 41));
+        jLabel25.setText("E");
+
+        jLabel3.setForeground(new java.awt.Color(255, 206, 41));
+        jLabel3.setText("L");
+
+        jLabel26.setForeground(new java.awt.Color(255, 206, 41));
+        jLabel26.setText("I");
+
+        jLabel24.setForeground(new java.awt.Color(255, 206, 41));
+        jLabel24.setText("B");
+
+        javax.swing.GroupLayout jPanel4Layout = new javax.swing.GroupLayout(jPanel4);
+        jPanel4.setLayout(jPanel4Layout);
+        jPanel4Layout.setHorizontalGroup(
+            jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel4Layout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jLabel25, javax.swing.GroupLayout.PREFERRED_SIZE, 40, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jLabel3, javax.swing.GroupLayout.PREFERRED_SIZE, 40, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jLabel26, javax.swing.GroupLayout.PREFERRED_SIZE, 40, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jLabel24, javax.swing.GroupLayout.PREFERRED_SIZE, 40, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addContainerGap(54, Short.MAX_VALUE))
+        );
+        jPanel4Layout.setVerticalGroup(
+            jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel4Layout.createSequentialGroup()
+                .addGap(28, 28, 28)
+                .addComponent(jLabel25, javax.swing.GroupLayout.PREFERRED_SIZE, 20, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jLabel3, javax.swing.GroupLayout.PREFERRED_SIZE, 20, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jLabel26, javax.swing.GroupLayout.PREFERRED_SIZE, 20, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jLabel24, javax.swing.GroupLayout.PREFERRED_SIZE, 20, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(34, Short.MAX_VALUE))
+        );
+
+        jPanel2.add(jPanel4, new org.netbeans.lib.awtextra.AbsoluteConstraints(540, 70, 100, 160));
+
         jLabel7.setIcon(new javax.swing.ImageIcon("D:\\DuAn1\\QuanLyThuVien\\QuanLyThuVien\\src\\quanlythuvien\\icon\\FiveO - ELib Low Opacity.png")); // NOI18N
         jPanel2.add(jLabel7, new org.netbeans.lib.awtextra.AbsoluteConstraints(220, 0, 500, 438));
 
@@ -649,11 +761,11 @@ public class QuanlySach extends javax.swing.JFrame {
         this.clearForm();
     }//GEN-LAST:event_btnSaveActionPerformed
 
-    private void jButton6ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton6ActionPerformed
+    private void btnREActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnREActionPerformed
         // TODO add your handling code here:
         this.clearForm();
         this.editText1();
-    }//GEN-LAST:event_jButton6ActionPerformed
+    }//GEN-LAST:event_btnREActionPerformed
 
     private void btnUpdateActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnUpdateActionPerformed
         // TODO add your handling code here:
@@ -665,8 +777,8 @@ public class QuanlySach extends javax.swing.JFrame {
         // TODO add your handling code here:
         if (evt.getClickCount() == 2) {
             this.row = tblQuanLySach.getSelectedRow();
-            String maSach = (String) tblQuanLySach.getValueAt(this.row, 0);
-            Sach s = sDAO.selectById(maSach);
+            int id = (int) tblQuanLySach.getValueAt(this.row, 0);
+            Sach s = sDAO.selectById(id);
             this.setForm(s);;
             this.editText();
             tabs.setSelectedIndex(1);
@@ -676,52 +788,60 @@ public class QuanlySach extends javax.swing.JFrame {
     private void jButton8ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton8ActionPerformed
         // TODO add your handling code here:
         this.first();
+        this.editText();
     }//GEN-LAST:event_jButton8ActionPerformed
 
     private void jButton9ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton9ActionPerformed
         // TODO add your handling code here:
         this.prev();
+        this.editText();
     }//GEN-LAST:event_jButton9ActionPerformed
 
     private void jButton10ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton10ActionPerformed
         // TODO add your handling code here:
         this.next();
+        this.editText();
     }//GEN-LAST:event_jButton10ActionPerformed
 
     private void jButton11ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton11ActionPerformed
         // TODO add your handling code here:
         this.last();
+        this.editText();
     }//GEN-LAST:event_jButton11ActionPerformed
 
     private void jButton12ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton12ActionPerformed
         // TODO add your handling code here:
         this.first();
+        this.editText();
     }//GEN-LAST:event_jButton12ActionPerformed
 
     private void jButton13ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton13ActionPerformed
         // TODO add your handling code here:
         this.prev();
+        this.editText();
     }//GEN-LAST:event_jButton13ActionPerformed
 
     private void jButton14ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton14ActionPerformed
         // TODO add your handling code here:
         this.next();
+        this.editText();
     }//GEN-LAST:event_jButton14ActionPerformed
 
     private void jButton15ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton15ActionPerformed
         // TODO add your handling code here:
         this.last();
+        this.editText();
     }//GEN-LAST:event_jButton15ActionPerformed
 
     private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
         // TODO add your handling code here:
 
         this.row = tblQuanLySach.getSelectedRow();
-        String maSach = (String) tblQuanLySach.getValueAt(this.row, 0);
-        Sach s = sDAO.selectById(maSach);
+        int id = (int) tblQuanLySach.getValueAt(this.row, 0);
+        Sach s = sDAO.selectById(id);
         if (MsgBox.confirm(this, "Bạn có chắc chắn xóa Sách này ?")) {
             try {
-                sDAO.delete(maSach);
+                sDAO.delete(id);
                 this.fillTable();
                 this.clearForm();
                 MsgBox.alert(this, "Xóa thành công!");
@@ -731,6 +851,25 @@ public class QuanlySach extends javax.swing.JFrame {
             }
         }
     }//GEN-LAST:event_jButton2ActionPerformed
+
+    private void txtTimKiemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtTimKiemActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_txtTimKiemActionPerformed
+
+    private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
+        // TODO add your handling code here:
+        this.timSach();
+    }//GEN-LAST:event_jButton1ActionPerformed
+
+    private void cboDSHienThiActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cboDSHienThiActionPerformed
+        // TODO add your handling code here:
+        if(cboDSHienThi.getSelectedIndex() == 1){
+            this.fillTable();
+        }else{
+//            this.chonTheLoai();
+            this.fill();
+        }
+    }//GEN-LAST:event_cboDSHienThiActionPerformed
 
     /**
      * @param args the command line arguments
@@ -769,8 +908,10 @@ public class QuanlySach extends javax.swing.JFrame {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JButton btnRE;
     private javax.swing.JButton btnSave;
     private javax.swing.JButton btnUpdate;
+    private javax.swing.JComboBox<String> cboDSHienThi;
     private javax.swing.JComboBox<String> cboNXB;
     private javax.swing.JComboBox<String> cboNgonNgu;
     private javax.swing.JComboBox<String> cboTheLoai;
@@ -784,7 +925,6 @@ public class QuanlySach extends javax.swing.JFrame {
     private javax.swing.JButton jButton2;
     private javax.swing.JButton jButton3;
     private javax.swing.JButton jButton4;
-    private javax.swing.JButton jButton6;
     private javax.swing.JButton jButton8;
     private javax.swing.JButton jButton9;
     private javax.swing.JLabel jLabel1;
@@ -803,6 +943,10 @@ public class QuanlySach extends javax.swing.JFrame {
     private javax.swing.JLabel jLabel21;
     private javax.swing.JLabel jLabel22;
     private javax.swing.JLabel jLabel23;
+    private javax.swing.JLabel jLabel24;
+    private javax.swing.JLabel jLabel25;
+    private javax.swing.JLabel jLabel26;
+    private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel4;
     private javax.swing.JLabel jLabel5;
     private javax.swing.JLabel jLabel6;
@@ -815,6 +959,8 @@ public class QuanlySach extends javax.swing.JFrame {
     private javax.swing.JMenuBar jMenuBar1;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel2;
+    private javax.swing.JPanel jPanel3;
+    private javax.swing.JPanel jPanel4;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JToolBar jToolBar1;
     private javax.swing.JToolBar jToolBar2;
@@ -831,15 +977,7 @@ public class QuanlySach extends javax.swing.JFrame {
     // End of variables declaration//GEN-END:variables
 
     boolean validates() {
-        if (txtMaS.getText().equals("")) {
-            MsgBox.alert(this, "Vui lòng nhập Mã Sách!");
-            txtMaS.requestFocus();
-            return false;
-        } else if (sDAO.selectById(txtMaS.getText()) != null) {
-            MsgBox.alert(this, "Mã Sách đã tồn tại!");
-            txtMaS.requestFocus();
-            return false;
-        } else if (txtTenS.getText().equals("")) {
+        if (txtTenS.getText().equals("")) {
             MsgBox.alert(this, "Vui lòng nhập Tên sách!");
             txtTenS.requestFocus();
             return false;
@@ -883,28 +1021,61 @@ public class QuanlySach extends javax.swing.JFrame {
 
         return true;
     }
-    
-    void editText(){
+
+    void editText() {
         boolean edit = (this.row >= 0);
-        Font f = new Font(Font.SANS_SERIF,Font.BOLD,18);        
+        Font f = new Font(Font.SANS_SERIF, Font.BOLD, 18);
         txtMaS.setEditable(!edit);
         txtTenS.setEditable(!edit);
         btnSave.setEnabled(!edit);
+        btnUpdate.setEnabled(edit);
         txtMaS.setFont(f);
         txtTenS.setFont(f);
         txtMaS.setForeground(Color.red);
         txtTenS.setForeground(Color.red);
     }
-        void editText1(){
+
+    void editText1() {
         boolean edit = (this.row >= 0);
-        Font f = new Font(Font.SANS_SERIF,Font.PLAIN,12); 
-        txtMaS.setEditable(edit);
+        Font f = new Font(Font.SANS_SERIF, Font.PLAIN, 12);
         txtTenS.setEditable(edit);
         btnSave.setEnabled(edit);
+        btnUpdate.setEnabled(!edit);
         txtMaS.setFont(f);
         txtTenS.setFont(f);
         txtMaS.setForeground(Color.black);
         txtTenS.setForeground(Color.black);
     }
 
+        void fill(){
+                DefaultTableModel model = (DefaultTableModel) tblQuanLySach.getModel();
+        model.setRowCount(0);
+        try {
+            String loai = (String) cboDSHienThi.getSelectedItem();
+            List<Sach> list = sDAO.selectByTheLoai(loai);
+             for (Sach s : list) {
+                Object[] row = {
+                    s.getID(),
+                    s.getTenSach(),
+                    s.getTenTacGia(),
+                    s.getNXB(),
+                    s.getTheLoai(),
+                    s.getNgonNgu(),
+                    s.getDonGia(),
+                    s.getViTri(),
+                    s.getSoLuong(),
+                    s.getAnh()
+                };
+                model.addRow(row);
+            }
+        } catch (Exception e) {
+            MsgBox.alert(this, "Lỗi truy vấn dữ liệu!");
+            e.printStackTrace();
+        }
+        }
+        void chonTheLoai(){
+            Sach s = (Sach) cboDSHienThi.getSelectedItem();
+            this.fill();
+            this.row = 0;
+        }
 }
