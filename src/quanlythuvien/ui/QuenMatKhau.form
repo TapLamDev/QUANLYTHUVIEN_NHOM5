@@ -179,6 +179,9 @@
               <Image iconType="3" name="/quanlythuvien/icon/back 2.png"/>
             </Property>
           </Properties>
+          <Events>
+            <EventHandler event="mouseClicked" listener="java.awt.event.MouseListener" parameters="java.awt.event.MouseEvent" handler="jLabel12MouseClicked"/>
+          </Events>
         </Component>
       </SubComponents>
     </Container>

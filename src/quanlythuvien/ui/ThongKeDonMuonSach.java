@@ -4,28 +4,73 @@
  */
 package quanlythuvien.ui;
 
+import java.sql.DriverManager;
+import java.sql.ResultSet;
+import java.sql.Statement;
+import java.util.ArrayList;
 import javax.swing.table.DefaultTableModel;
+import quanlythuvien.entity.ThongKe;
 
 /**
  *
  * @author phamb
  */
 public class ThongKeDonMuonSach extends javax.swing.JFrame {
+    
     DefaultTableModel tblModel;
-    /**
-     * Creates new form ThongKeDonMuonSach
-     */
+    String connectionUrl = "jdbc:sqlserver://localhost:1433;databaseName=ELib;user=sa;password=My27012003@;encrypt=true;trustServerCertificate=true";
+    private ArrayList<ThongKe> list = new ArrayList<>();
+    
+    
     public ThongKeDonMuonSach() {
         initComponents();
         setTitle("Thống Kê Đơn Mượn Sách");
         setLocationRelativeTo(null);
         initTable();
+        load_data();
+        fillToTable();
     }
     
     public void initTable() {
         tblModel = (DefaultTableModel) tblThongKe.getModel();
         String[] nav = new String[]{"Mã sách", "Tên sách", "Tác giả", "NXB", "Thể loại", "Vị trí", "Đơn giá"};
         tblModel.setColumnIdentifiers(nav);
+    }
+    
+    
+    public void fillToTable() {
+        DefaultTableModel tblModel = (DefaultTableModel) tblThongKe.getModel();
+        tblModel.setRowCount(0);
+        for (ThongKe t : list) {
+            Object[] row = new Object[]{t.getID(), t.getTenS(), t.getTenTacGia(), t.getNhaXuatBan(), t.getTheLoai(), t.getViTri(), t.getGia()};
+            tblModel.addRow(row);
+        }
+    }
+    
+    public void load_data() {
+        try ( java.sql.Connection con = DriverManager.getConnection(connectionUrl);) {
+            String sql = "Select ID, TenS, TenTacGia, NhaXuatBan, TheLoai, ViTri, Gia\n"
+                    + "From Sach";
+            Statement stm = con.createStatement();
+            ResultSet rs = stm.executeQuery(sql);
+            list.clear();
+            while (rs.next()) {
+                int ID = rs.getInt(1);
+                String TenS = rs.getString(2);
+                String TenTacGia = rs.getString(3);
+                String NhaXuatBan = rs.getString(4);
+                String TheLoai = rs.getString(5);
+                String ViTri = rs.getString(6);
+                String Gia = rs.getString(7);
+
+                ThongKe tt = new ThongKe(ID, TenS, TenTacGia, NhaXuatBan, TheLoai, ViTri, Gia);
+                list.add(tt);
+            }
+            fillToTable();
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     /**

@@ -14,15 +14,13 @@ public class ThongKe {
     private String TenTacGia;
     private String NhaXuatBan;
     private String TheLoai;
-    private int ViTri;
+    private String ViTri;
     private String Gia;
-
-
 
     public ThongKe() {
     }
 
-    public ThongKe(int ID, String TenS, String TenTacGia, String NhaXuatBan, String TheLoai, int ViTri, String Gia) {
+    public ThongKe(int ID, String TenS, String TenTacGia, String NhaXuatBan, String TheLoai, String ViTri, String Gia) {
         this.ID = ID;
         this.TenS = TenS;
         this.TenTacGia = TenTacGia;
@@ -31,8 +29,6 @@ public class ThongKe {
         this.ViTri = ViTri;
         this.Gia = Gia;
     }
-
-
 
     public int getID() {
         return ID;
@@ -74,11 +70,11 @@ public class ThongKe {
         this.TheLoai = TheLoai;
     }
 
-    public int getViTri() {
+    public String getViTri() {
         return ViTri;
     }
 
-    public void setViTri(int ViTri) {
+    public void setViTri(String ViTri) {
         this.ViTri = ViTri;
     }
 
@@ -89,6 +85,5 @@ public class ThongKe {
     public void setGia(String Gia) {
         this.Gia = Gia;
     }
-    
     
 }

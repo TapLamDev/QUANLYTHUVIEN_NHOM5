@@ -277,6 +277,11 @@ public class DangKy extends javax.swing.JFrame {
         });
 
         jLabel12.setIcon(new javax.swing.ImageIcon(getClass().getResource("/quanlythuvien/icon/back 2.png"))); // NOI18N
+        jLabel12.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                jLabel12MouseClicked(evt);
+            }
+        });
 
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
@@ -427,6 +432,11 @@ public class DangKy extends javax.swing.JFrame {
         }
     }//GEN-LAST:event_jButton1ActionPerformed
 
+    private void jLabel12MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jLabel12MouseClicked
+        // TODO add your handling code here:
+        this.openDangNhap();
+    }//GEN-LAST:event_jLabel12MouseClicked
+
     /**
      * @param args the command line arguments
      */
@@ -501,4 +511,9 @@ public class DangKy extends javax.swing.JFrame {
     private javax.swing.JTextField txtTenND;
     private javax.swing.JTextField txtXacNhanMK;
     // End of variables declaration//GEN-END:variables
+    private void openDangNhap(){
+        new DangNhap().setVisible(true);
+        this.dispose();
+    }
+
 }

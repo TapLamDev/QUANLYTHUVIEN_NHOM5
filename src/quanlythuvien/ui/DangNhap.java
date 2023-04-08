@@ -134,6 +134,11 @@ public class DangNhap extends javax.swing.JFrame {
         lblQuenMK1.setFont(new java.awt.Font("Segoe UI", 0, 18)); // NOI18N
         lblQuenMK1.setForeground(new java.awt.Color(255, 204, 51));
         lblQuenMK1.setText("Quên mật khẩu ?");
+        lblQuenMK1.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                lblQuenMK1MouseClicked(evt);
+            }
+        });
         getContentPane().add(lblQuenMK1, new org.netbeans.lib.awtextra.AbsoluteConstraints(300, 270, -1, -1));
 
         jLabel13.setFont(new java.awt.Font("Segoe UI", 0, 18)); // NOI18N
@@ -143,6 +148,11 @@ public class DangNhap extends javax.swing.JFrame {
         jLabel14.setFont(new java.awt.Font("Segoe UI", 0, 18)); // NOI18N
         jLabel14.setForeground(new java.awt.Color(255, 204, 51));
         jLabel14.setText("Đăng ký ngay");
+        jLabel14.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                jLabel14MouseClicked(evt);
+            }
+        });
         getContentPane().add(jLabel14, new org.netbeans.lib.awtextra.AbsoluteConstraints(330, 310, -1, -1));
 
         jLabel1.setFont(new java.awt.Font("Segoe UI", 1, 18)); // NOI18N
@@ -211,6 +221,16 @@ public class DangNhap extends javax.swing.JFrame {
         }
     }//GEN-LAST:event_btnDangNhap1ActionPerformed
 
+    private void jLabel14MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jLabel14MouseClicked
+        // TODO add your handling code here:
+        this.openDangKy();
+    }//GEN-LAST:event_jLabel14MouseClicked
+
+    private void lblQuenMK1MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_lblQuenMK1MouseClicked
+        // TODO add your handling code here:
+        this.openQuenMK();
+    }//GEN-LAST:event_lblQuenMK1MouseClicked
+
     /**
      * @param args the command line arguments
      */
@@ -269,4 +289,15 @@ public class DangNhap extends javax.swing.JFrame {
     private javax.swing.JPasswordField txtMatKhau;
     private javax.swing.JTextField txtTenND;
     // End of variables declaration//GEN-END:variables
+    private void openDangKy(){
+        new DangKy().setVisible(true);
+        this.dispose();
+    }
+    
+    private void openQuenMK(){
+        new QuenMatKhau().setVisible(true);
+        this.dispose();
+    }
+
+
 }
