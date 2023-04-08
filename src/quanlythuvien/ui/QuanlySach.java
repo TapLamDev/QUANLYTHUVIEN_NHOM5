@@ -46,7 +46,7 @@ public class QuanlySach extends javax.swing.JFrame {
 
     public void initTable() {
         tblModel = (DefaultTableModel) tblQuanLySach.getModel();
-        String[] nav = new String[]{"ID", "Tên Sách", "Tác Giả", "NXB", "Thể Loại", "Ngôn Ngữ", "Đơn Giá", "Vị Trí", "Số Lượng", "Ảnh"};
+        String[] nav = new String[]{"ID", "Tên Sách", "Tác Giả", "NXB", "Thể Loại", "Ngôn Ngữ", "Đơn Giá", "Vị Trí", "Số Lượng"};
         tblModel.setColumnIdentifiers(nav);
     }
 

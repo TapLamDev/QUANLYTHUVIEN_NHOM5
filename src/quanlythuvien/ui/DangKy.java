@@ -4,7 +4,13 @@
  */
 package quanlythuvien.ui;
 
+import java.awt.Color;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import javax.swing.JOptionPane;
+import quanlythuvien.DAO.NguoiDungDAO;
+import quanlythuvien.entity.NguoiDung;
+import quanlythuvien.util.MsgBox;
 
 /**
  *
@@ -14,12 +20,20 @@ public class DangKy extends javax.swing.JFrame {
 
     /**
      * Creates new form DangKy
-     */
+     */NguoiDungDAO ndd = new NguoiDungDAO();
+    
     public DangKy() {
         initComponents();
         setLocationRelativeTo(null);
         setTitle("Đăng ký");
     }
+
+    private static final String P_EMAIL = "^([a-z0-9_\\.-]+)@([\\da-z\\.-]+)\\.([a-z\\.]{2,6})$";
+     String P_CCCD = "^([0-9]{12,12})$";
+     String p_SDT = "^([0-9]{10,11})$";
+      String P_MK = "^([a-z0-9]{6,16})$";
+    String reg = "^(0|\\+84)(\\s|\\.)?((3[2-9])|(5[689])|(7[06-9])|(8[1-689])|(9[0-46-9]))(\\d)(\\s|\\.)?(\\d{3})(\\s|\\.)?(\\d{3})$";
+    
 
     public boolean validateForm() {
         if (txtHo.getText().isEmpty() && txtHo.toString().trim().equalsIgnoreCase("HỌ")) {
@@ -27,7 +41,7 @@ public class DangKy extends javax.swing.JFrame {
             txtHo.requestFocus();
             return false;
         }
-        if (txtTen.getText().isEmpty() && txtHo.toString().trim().equalsIgnoreCase("TÊN")) {
+        if (txtTen.getText().isEmpty() && txtTen.toString().trim().equalsIgnoreCase("TÊN")) {
             JOptionPane.showMessageDialog(this, "Chưa nhập tên!");
             return false;
         }
@@ -43,24 +57,53 @@ public class DangKy extends javax.swing.JFrame {
             JOptionPane.showMessageDialog(this, "Chưa chọn năm!");
             return false;
         }
+        if (rdoNam.isSelected() == false && rdoNu.isSelected() == false) {
+            JOptionPane.showMessageDialog(this, "Bạn chưa chọn giới tính");
+            return false;
+        }
+        
         if (txtCCCD.getText().isEmpty()) {
             JOptionPane.showMessageDialog(this, "Chưa nhập CCCD/CMND!");
             txtCCCD.requestFocus();
             return false;
+        }
+        Matcher matcher = Pattern.compile(P_CCCD).matcher(txtCCCD.getText());
+        if (!matcher.matches()) {
+            JOptionPane.showMessageDialog(this, "CCCD phải đủ 12 số");
+            txtCCCD.setBackground(Color.yellow);
+            return false;
+        } else {
+            txtCCCD.setBackground(Color.WHITE);
         }
         if (txtSDT.getText().isEmpty()) {
             JOptionPane.showMessageDialog(this, "Chưa nhập SĐT!");
             txtSDT.requestFocus();
             return false;
         }
+        matcher = Pattern.compile(p_SDT).matcher(txtSDT.getText());
+        if (!matcher.matches()) {
+            JOptionPane.showMessageDialog(this, "Số điện thoại phải từ 10 - 11 số");
+            txtSDT.setBackground(Color.yellow);
+            return false;
+        } else {
+            txtSDT.setBackground(Color.WHITE);
+        }
         if (txtEmail.getText().isEmpty()) {
             JOptionPane.showMessageDialog(this, "Chưa nhập email!");
             txtEmail.requestFocus();
             return false;
         }
+         matcher = Pattern.compile(P_EMAIL).matcher(txtEmail.getText());
+        if (!matcher.matches()) {
+            JOptionPane.showMessageDialog(this, "Email sai định dạng");
+            txtEmail.setBackground(Color.yellow);
+            return false;
+        } else {
+            txtEmail.setBackground(Color.WHITE);
+        }
         if (txtTenND.getText().isEmpty()) {
             JOptionPane.showMessageDialog(this, "Chưa nhập tên người dùng!");
-            txtSDT.requestFocus();
+            txtTenND.requestFocus();
             return false;
         }
         if (txtMatKhau.getText().isEmpty()) {
@@ -68,14 +111,40 @@ public class DangKy extends javax.swing.JFrame {
             txtMatKhau.requestFocus();
             return false;
         }
+         matcher = Pattern.compile(P_MK).matcher(txtMatKhau.getText());
+        if (!matcher.matches()) {
+            JOptionPane.showMessageDialog(this, "Mật khẩu từ 6 - 16 kí tự");
+            txtMatKhau.setBackground(Color.yellow);
+            return false;
+        } else {
+            txtMatKhau.setBackground(Color.WHITE);
+        }
         if (txtXacNhanMK.getText().isEmpty()) {
             JOptionPane.showMessageDialog(this, "Vui lòng nhập mật khẩu xác nhận!");
             txtXacNhanMK.requestFocus();
             return false;
         }
+        if(!txtXacNhanMK.getText().equals(txtMatKhau.getText()))
+        {
+            JOptionPane.showMessageDialog(this, "Mật khẩu xác nhận không chính xác. Vui lòng nhập lại");
+            txtXacNhanMK.requestFocus();
+            return false;
+        }
+        if (ndd.check(txtTenND.getText())){
+            JOptionPane.showMessageDialog(this, "Tài khoản đã tồn tại!");
+            txtTenND.requestFocus();
+            return false;
+        }
+        
         return true;
 
     }
+     public void DangKy(){
+         String date = cboNam.getSelectedItem()+ "-"+cboThang.getSelectedItem()+"-"+cboNgay.getSelectedItem();
+         NguoiDung nd = new NguoiDung(true, txtHo.getText(), txtTen.getText(), date, rdoNam.isSelected(), txtCCCD.getText(), txtSDT.getText(), txtEmail.getText(), txtTenND.getText(), txtMatKhau.getText());
+         ndd.insert(nd);
+         MsgBox.alert(this, "Đăng Ký Thành Công");
+     }
 
     /**
      * This method is called from within the constructor to initialize the form.
@@ -160,11 +229,11 @@ public class DangKy extends javax.swing.JFrame {
 
         jLabel2.setText("SINH NHẬT:");
 
-        cboNgay.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Ngày" }));
+        cboNgay.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Ngày", "1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12", "13", "14", "15", "16", "17", "18", "19", "20", "21", "22", "23", "24", "25", "26", "27", "28", "29", "30", "31" }));
 
-        cboThang.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Tháng", " " }));
+        cboThang.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Tháng", "1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12", " " }));
 
-        cboNam.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Năm", " " }));
+        cboNam.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Năm", "1990", "1991", "1992", "1993", "1994", "1995", "1996", "1997", "1998", "1999", "2000", "2001", "2002", "2003", "2004", "2005", "2006", "2007", "2008", "2009", "2010", "2011", "2012", "2013", "2014", "2015", "2016", "2017", "2018", "2019", "2020", "2021", "2022", "2023" }));
 
         jLabel3.setText("GIỚI TÍNH:");
 
@@ -352,7 +421,10 @@ public class DangKy extends javax.swing.JFrame {
     }//GEN-LAST:event_txtTenMouseClicked
 
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
-        validateForm();
+        if(validateForm())
+        {
+            DangKy();
+        }
     }//GEN-LAST:event_jButton1ActionPerformed
 
     /**

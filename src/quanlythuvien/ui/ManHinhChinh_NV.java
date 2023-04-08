@@ -4,6 +4,9 @@
  */
 package quanlythuvien.ui;
 
+import java.util.ArrayList;
+import quanlythuvien.entity.AccRunning;
+
 /**
  *
  * @author phamb
@@ -13,7 +16,12 @@ public class ManHinhChinh_NV extends javax.swing.JFrame {
     /**
      * Creates new form FiveO_ELib3
      */
+    
+    java.util.List<AccRunning> list = new ArrayList<AccRunning>();
+    
+    
     public ManHinhChinh_NV() {
+        this.list = list;
         initComponents();
         setTitle("FiveO - ELib");
         setLocationRelativeTo(null);

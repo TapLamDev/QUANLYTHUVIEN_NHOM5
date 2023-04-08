@@ -4,6 +4,9 @@
  */
 package quanlythuvien.ui;
 
+import java.util.ArrayList;
+import quanlythuvien.entity.AccRunning;
+
 /**
  *
  * @author phamb
@@ -13,10 +16,23 @@ public class ManHinhChinh_ND extends javax.swing.JFrame {
     /**
      * Creates new form FiveO_ELib
      */
-    public ManHinhChinh_ND() {
+    java.util.List<AccRunning> list = new ArrayList<AccRunning>();
+    
+    
+    public ManHinhChinh_ND(java.util.List<AccRunning> list) {
+        this.list = list;
         initComponents();
         setTitle("FiveO - ELib");
         setLocationRelativeTo(null);
+    }
+
+    public ManHinhChinh_ND() {
+    }
+    
+    public void OpenHoSo(java.util.List<AccRunning> list){
+        HoSo hs = new HoSo(list);
+        hs.setVisible(true);
+        dispose();
     }
 
     /**
@@ -100,6 +116,11 @@ public class ManHinhChinh_ND extends javax.swing.JFrame {
 
         jMenuItem2.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_I, java.awt.event.InputEvent.CTRL_DOWN_MASK));
         jMenuItem2.setText("Hồ sơ");
+        jMenuItem2.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jMenuItem2ActionPerformed(evt);
+            }
+        });
         jMenu1.add(jMenuItem2);
         jMenu1.add(jSeparator1);
 
@@ -162,6 +183,11 @@ public class ManHinhChinh_ND extends javax.swing.JFrame {
         // TODO add your handling code here:
     }//GEN-LAST:event_jMenuItem8ActionPerformed
 
+    private void jMenuItem2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem2ActionPerformed
+        // TODO add your handling code here:
+         OpenHoSo(this.list);
+    }//GEN-LAST:event_jMenuItem2ActionPerformed
+
     /**
      * @param args the command line arguments
      */
@@ -173,7 +199,7 @@ public class ManHinhChinh_ND extends javax.swing.JFrame {
          */
         try {
             for (javax.swing.UIManager.LookAndFeelInfo info : javax.swing.UIManager.getInstalledLookAndFeels()) {
-                if ("Nimbus".equals(info.getName())) {
+                if ("Windows".equals(info.getName())) {
                     javax.swing.UIManager.setLookAndFeel(info.getClassName());
                     break;
                 }

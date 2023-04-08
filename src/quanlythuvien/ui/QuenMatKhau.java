@@ -4,6 +4,14 @@
  */
 package quanlythuvien.ui;
 
+import java.awt.Color;
+import java.sql.DriverManager;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.util.ArrayList;
+import javax.swing.JOptionPane;
+import quanlythuvien.entity.NguoiDung;
+
 /**
  *
  * @author phamb
@@ -17,6 +25,65 @@ public class QuenMatKhau extends javax.swing.JFrame {
         initComponents();
         setLocationRelativeTo(null);
         setTitle("Quên Mật Khẩu");
+        LoadDataNguoiDungToArray();
+    }
+    
+    
+    ArrayList<NguoiDung> listND = new ArrayList<>();
+    String connectionUrl = "jdbc:sqlserver://localhost:1433;databaseName=Elib;user=sa;password=My27012003@;encrypt=true;trustServerCertificate=true";
+   
+    public void LoadDataNguoiDungToArray() //doc tat ca du lieu trong table NguoiDung vao arraylist
+    {
+        try ( java.sql.Connection con = DriverManager.getConnection(connectionUrl);  java.sql.Statement stmt = con.createStatement();) {
+            String sql = "Select * From NGUOIDUNG";
+            ResultSet rs = stmt.executeQuery(sql);
+            listND.clear();
+            while (rs.next()) {
+                String Ho = rs.getString(2);
+                String Ten = rs.getString(3);
+                String ngaySinh = rs.getString(4);
+                boolean gioiTinh = rs.getBoolean(5);
+                String cCCD = rs.getString(6);
+                String sDT = rs.getString(7);
+                String Email = rs.getString(8);
+                String taiKhoan = rs.getString(9);
+                
+                NguoiDung nd = new NguoiDung(Ho, Ten, ngaySinh, gioiTinh, cCCD, sDT, Email, taiKhoan);
+                listND.add(nd);
+            }
+            con.close();
+
+        } catch (Exception e) {
+            System.out.println(e);
+        }
+    }
+    
+     public boolean checkNull() {
+        if (txtTenND.getText().equals("")) {
+            JOptionPane.showMessageDialog(this, "Vui lòng nhập tên tài khoản người dùng !!!");
+            txtTenND.requestFocus();
+            txtTenND.setBackground(Color.YELLOW);
+            return false;
+        }
+        if (txtEmail.getText().equals("")) {
+            JOptionPane.showMessageDialog(this, "Vui lòng nhập Email đã đăng kí");
+            txtEmail.requestFocus();
+            txtEmail.setBackground(Color.YELLOW);
+            return false;
+        }
+        return true;
+    }
+     public boolean checkTaiKhoan() {
+        boolean check = false;
+        for (NguoiDung nd : listND) {
+            if (txtTenND.getText().equalsIgnoreCase(nd.getTaiKhoan()) && txtEmail.getText().equalsIgnoreCase(nd.getEmail()))
+            {
+
+                check = true;
+            } 
+        }
+        
+        return check;
     }
 
     /**
@@ -29,7 +96,6 @@ public class QuenMatKhau extends javax.swing.JFrame {
     private void initComponents() {
 
         jPanel1 = new javax.swing.JPanel();
-        jLabel4 = new javax.swing.JLabel();
         jLabel5 = new javax.swing.JLabel();
         jLabel6 = new javax.swing.JLabel();
         txtTenND = new javax.swing.JTextField();
@@ -44,26 +110,26 @@ public class QuenMatKhau extends javax.swing.JFrame {
         jPanel1.setBackground(new java.awt.Color(250, 247, 242));
         jPanel1.setForeground(new java.awt.Color(255, 204, 204));
 
-        jLabel4.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
-        jLabel4.setIcon(new javax.swing.ImageIcon(getClass().getResource("/quanlythuvien/icon/logologin3.png"))); // NOI18N
-
         jLabel5.setFont(new java.awt.Font("Segoe UI", 0, 18)); // NOI18N
         jLabel5.setText("Email khôi phục:");
 
         jLabel6.setFont(new java.awt.Font("Segoe UI", 0, 18)); // NOI18N
         jLabel6.setText("Tên người dùng:");
 
-        txtTenND.setText("Nhập tên người dùng...");
         txtTenND.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
                 txtTenNDMouseClicked(evt);
+            }
+        });
+        txtTenND.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                txtTenNDActionPerformed(evt);
             }
         });
 
         jLabel1.setFont(new java.awt.Font("Segoe UI", 1, 18)); // NOI18N
         jLabel1.setText("QUÊN MẬT KHẨU");
 
-        txtEmail.setText("Nhập email khôi phục...");
         txtEmail.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
                 txtEmailMouseClicked(evt);
@@ -73,6 +139,11 @@ public class QuenMatKhau extends javax.swing.JFrame {
         jButton1.setBackground(new java.awt.Color(117, 76, 36));
         jButton1.setForeground(new java.awt.Color(255, 206, 41));
         jButton1.setText("XÁC NHẬN");
+        jButton1.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton1ActionPerformed(evt);
+            }
+        });
 
         jLabel2.setIcon(new javax.swing.ImageIcon(getClass().getResource("/quanlythuvien/icon/FiveO - ELib 120x120.png"))); // NOI18N
 
@@ -85,10 +156,10 @@ public class QuenMatKhau extends javax.swing.JFrame {
             .addGroup(jPanel1Layout.createSequentialGroup()
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(jPanel1Layout.createSequentialGroup()
+                        .addContainerGap()
+                        .addComponent(jLabel2, javax.swing.GroupLayout.PREFERRED_SIZE, 120, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addGroup(jPanel1Layout.createSequentialGroup()
-                                .addContainerGap()
-                                .addComponent(jLabel2, javax.swing.GroupLayout.PREFERRED_SIZE, 120, javax.swing.GroupLayout.PREFERRED_SIZE)
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                                     .addComponent(txtTenND, javax.swing.GroupLayout.PREFERRED_SIZE, 265, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -96,15 +167,13 @@ public class QuenMatKhau extends javax.swing.JFrame {
                                     .addComponent(jLabel5)
                                     .addComponent(txtEmail, javax.swing.GroupLayout.PREFERRED_SIZE, 264, javax.swing.GroupLayout.PREFERRED_SIZE)))
                             .addGroup(jPanel1Layout.createSequentialGroup()
-                                .addGap(204, 204, 204)
-                                .addComponent(jButton1, javax.swing.GroupLayout.PREFERRED_SIZE, 111, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(jLabel4, javax.swing.GroupLayout.PREFERRED_SIZE, 120, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                .addGap(78, 78, 78)
+                                .addComponent(jButton1, javax.swing.GroupLayout.PREFERRED_SIZE, 111, javax.swing.GroupLayout.PREFERRED_SIZE))))
                     .addGroup(jPanel1Layout.createSequentialGroup()
                         .addGap(151, 151, 151)
                         .addComponent(jLabel1))
                     .addComponent(jLabel12))
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addContainerGap(31, Short.MAX_VALUE))
         );
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -114,12 +183,9 @@ public class QuenMatKhau extends javax.swing.JFrame {
                 .addGap(18, 18, 18)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(jPanel1Layout.createSequentialGroup()
-                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                            .addGroup(jPanel1Layout.createSequentialGroup()
-                                .addComponent(jLabel4)
-                                .addGap(118, 118, 118))
-                            .addComponent(jLabel2, javax.swing.GroupLayout.PREFERRED_SIZE, 137, javax.swing.GroupLayout.PREFERRED_SIZE))
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 40, Short.MAX_VALUE)
+                        .addGap(0, 10, Short.MAX_VALUE)
+                        .addComponent(jLabel2, javax.swing.GroupLayout.PREFERRED_SIZE, 137, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(30, 30, 30)
                         .addComponent(jLabel12, javax.swing.GroupLayout.PREFERRED_SIZE, 56, javax.swing.GroupLayout.PREFERRED_SIZE))
                     .addGroup(jPanel1Layout.createSequentialGroup()
                         .addComponent(jLabel6)
@@ -141,7 +207,7 @@ public class QuenMatKhau extends javax.swing.JFrame {
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, 428, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap())
         );
         layout.setVerticalGroup(
@@ -162,6 +228,48 @@ public class QuenMatKhau extends javax.swing.JFrame {
     private void txtEmailMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_txtEmailMouseClicked
         txtEmail.setText("");
     }//GEN-LAST:event_txtEmailMouseClicked
+
+    private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
+        // TODO add your handling code here:
+        txtTenND.setBackground(Color.WHITE);
+        txtEmail.setBackground(Color.WHITE);
+       
+        if(checkNull())
+        {
+            if (checkTaiKhoan()) 
+            {
+                int max = 9999;
+                   int min = 1000;
+                   int newPass = (int) Math.floor(Math.random() * ((max - min) + 1) + min);
+                   String pass = String.valueOf(newPass);
+                   try ( java.sql.Connection con = DriverManager.getConnection(connectionUrl);  java.sql.Statement stmt = con.createStatement();) 
+                   {
+                       String sql = "UPDATE TAIKHOAN SET MATKHAU = ? WHERE TAIKHOAN LIKE '"+txtTenND.getText()+"'";
+                       PreparedStatement st = con.prepareStatement(sql);
+                       st.setString(1,pass);
+
+                       st.executeUpdate();
+                       JOptionPane.showMessageDialog(this, "Password mới của bạn là : " + newPass + "\nBạn có thể đổi sau khi đăng nhập lại thành công!");
+                       con.close();
+
+                    } catch (Exception e) 
+                    {
+                        System.out.println(e);
+                    }
+                
+            }else
+            {
+                JOptionPane.showMessageDialog(this,"Bạn đã nhập sai thông tin tên người dùng hoặc email"+"\n Vui lòng nhập lại");
+                txtTenND.setBackground(Color.YELLOW);
+                txtEmail.setBackground(Color.YELLOW);
+            
+            }
+        }
+    }//GEN-LAST:event_jButton1ActionPerformed
+
+    private void txtTenNDActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtTenNDActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_txtTenNDActionPerformed
 
     /**
      * @param args the command line arguments
@@ -203,7 +311,6 @@ public class QuenMatKhau extends javax.swing.JFrame {
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel12;
     private javax.swing.JLabel jLabel2;
-    private javax.swing.JLabel jLabel4;
     private javax.swing.JLabel jLabel5;
     private javax.swing.JLabel jLabel6;
     private javax.swing.JPanel jPanel1;

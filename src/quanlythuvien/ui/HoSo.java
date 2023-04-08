@@ -4,6 +4,10 @@
  */
 package quanlythuvien.ui;
 
+import java.util.ArrayList;
+import quanlythuvien.DAO.AccRunningDAO;
+import quanlythuvien.entity.AccRunning;
+
 /**
  *
  * @author phamb
@@ -13,10 +17,40 @@ public class HoSo extends javax.swing.JFrame {
     /**
      * Creates new form HoSo
      */
-    public HoSo() {
+    java.util.List<AccRunning> list = new ArrayList<AccRunning>();
+    
+    AccRunningDAO nrd = new AccRunningDAO();
+    public HoSo(java.util.List<AccRunning> list) {
         initComponents();
         setTitle("Hồ Sơ");
         setLocationRelativeTo(null);
+        InputHS(list);
+        this.list = list;
+    }
+    
+    public HoSo(){
+        
+    }
+    
+        public void InputHS(java.util.List<AccRunning> list){
+        txtTenND.setText(list.get(0).getHo() + " " + list.get(0).getTen());
+        txtNgatSinh.setText(list.get(0).getNgaySinh() + "");
+        txtGioiTinh.setText(list.get(0).isGioiTinh()? "Nam" : "Nữ" + "");
+        txtCCCD.setText(list.get(0).getcCCD() + "");
+        txtSDT.setText(list.get(0).getsDT() + "");
+        txtEmail.setText(list.get(0).getEmail()+ "");
+    }
+        
+    public void ChucVu(Boolean chucVu, java.util.List<AccRunning> list){
+        if (chucVu){
+            ManHinhChinh_ND mhc_ND = new ManHinhChinh_ND(list);
+            mhc_ND.setVisible(true);
+            dispose();
+        } else {
+            ManHinhChinh_NV mhc_NV = new ManHinhChinh_NV();
+            mhc_NV.setVisible(true);
+            dispose();
+        }
     }
 
     /**
@@ -31,17 +65,21 @@ public class HoSo extends javax.swing.JFrame {
         jButton3 = new javax.swing.JButton();
         jPanel1 = new javax.swing.JPanel();
         jPanel2 = new javax.swing.JPanel();
-        jLabel13 = new javax.swing.JLabel();
         jLabel2 = new javax.swing.JLabel();
-        jLabel3 = new javax.swing.JLabel();
+        jButton1 = new javax.swing.JButton();
         jLabel4 = new javax.swing.JLabel();
         jLabel5 = new javax.swing.JLabel();
         jLabel6 = new javax.swing.JLabel();
+        jLabel8 = new javax.swing.JLabel();
+        jLabel3 = new javax.swing.JLabel();
         jLabel7 = new javax.swing.JLabel();
-        jButton1 = new javax.swing.JButton();
-        jButton2 = new javax.swing.JButton();
-        jButton4 = new javax.swing.JButton();
-        jButton5 = new javax.swing.JButton();
+        txtTenND = new javax.swing.JLabel();
+        txtNgatSinh = new javax.swing.JLabel();
+        txtGioiTinh = new javax.swing.JLabel();
+        txtCCCD = new javax.swing.JLabel();
+        txtSDT = new javax.swing.JLabel();
+        txtEmail = new javax.swing.JLabel();
+        jLabel9 = new javax.swing.JLabel();
         jLabel1 = new javax.swing.JLabel();
         jMenuBar1 = new javax.swing.JMenuBar();
         jMenu1 = new javax.swing.JMenu();
@@ -58,63 +96,63 @@ public class HoSo extends javax.swing.JFrame {
 
         jPanel2.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
 
-        jLabel13.setIcon(new javax.swing.ImageIcon(getClass().getResource("/quanlythuvien/icon/back 2.png"))); // NOI18N
-        jPanel2.add(jLabel13, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 0, -1, 56));
-
         jLabel2.setFont(new java.awt.Font("Segoe UI", 1, 24)); // NOI18N
         jLabel2.setText("HỒ SƠ");
-        jPanel2.add(jLabel2, new org.netbeans.lib.awtextra.AbsoluteConstraints(210, 30, 80, -1));
-
-        jLabel3.setText("SĐT:");
-        jPanel2.add(jLabel3, new org.netbeans.lib.awtextra.AbsoluteConstraints(90, 170, -1, -1));
-
-        jLabel4.setText("Tên người dùng:");
-        jPanel2.add(jLabel4, new org.netbeans.lib.awtextra.AbsoluteConstraints(90, 90, -1, -1));
-
-        jLabel5.setText("Sinh nhật:");
-        jPanel2.add(jLabel5, new org.netbeans.lib.awtextra.AbsoluteConstraints(90, 210, -1, -1));
-
-        jLabel6.setText("Giới tính:");
-        jPanel2.add(jLabel6, new org.netbeans.lib.awtextra.AbsoluteConstraints(90, 250, -1, -1));
-
-        jLabel7.setText("Email:");
-        jPanel2.add(jLabel7, new org.netbeans.lib.awtextra.AbsoluteConstraints(90, 130, -1, -1));
+        jPanel2.add(jLabel2, new org.netbeans.lib.awtextra.AbsoluteConstraints(130, 30, 80, -1));
 
         jButton1.setBackground(new java.awt.Color(117, 76, 36));
         jButton1.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
         jButton1.setForeground(new java.awt.Color(255, 206, 41));
         jButton1.setIcon(new javax.swing.ImageIcon(getClass().getResource("/quanlythuvien/icon/edit.png"))); // NOI18N
         jButton1.setText("SỬA");
-        jPanel2.add(jButton1, new org.netbeans.lib.awtextra.AbsoluteConstraints(190, 310, 120, 30));
+        jPanel2.add(jButton1, new org.netbeans.lib.awtextra.AbsoluteConstraints(130, 300, 120, 30));
 
-        jButton2.setBackground(new java.awt.Color(117, 76, 36));
-        jButton2.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
-        jButton2.setForeground(new java.awt.Color(255, 206, 41));
-        jButton2.setIcon(new javax.swing.ImageIcon(getClass().getResource("/quanlythuvien/icon/edit.png"))); // NOI18N
-        jButton2.setText("SỬA");
-        jPanel2.add(jButton2, new org.netbeans.lib.awtextra.AbsoluteConstraints(190, 310, 120, 30));
+        jLabel4.setText("Tên người dùng:");
+        jPanel2.add(jLabel4, new org.netbeans.lib.awtextra.AbsoluteConstraints(90, 90, -1, -1));
 
-        jButton4.setBackground(new java.awt.Color(117, 76, 36));
-        jButton4.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
-        jButton4.setForeground(new java.awt.Color(255, 206, 41));
-        jButton4.setIcon(new javax.swing.ImageIcon(getClass().getResource("/quanlythuvien/icon/edit.png"))); // NOI18N
-        jButton4.setText("SỬA");
-        jPanel2.add(jButton4, new org.netbeans.lib.awtextra.AbsoluteConstraints(190, 310, 120, 30));
+        jLabel5.setText("Ngày sinh:");
+        jPanel2.add(jLabel5, new org.netbeans.lib.awtextra.AbsoluteConstraints(90, 120, -1, -1));
 
-        jButton5.setBackground(new java.awt.Color(117, 76, 36));
-        jButton5.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
-        jButton5.setForeground(new java.awt.Color(255, 206, 41));
-        jButton5.setIcon(new javax.swing.ImageIcon(getClass().getResource("/quanlythuvien/icon/done 2.png"))); // NOI18N
-        jButton5.setText("XÁC NHẬN");
-        jButton5.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jButton5ActionPerformed(evt);
+        jLabel6.setText("Giới tính:");
+        jPanel2.add(jLabel6, new org.netbeans.lib.awtextra.AbsoluteConstraints(90, 150, -1, -1));
+
+        jLabel8.setText("CCCD:");
+        jPanel2.add(jLabel8, new org.netbeans.lib.awtextra.AbsoluteConstraints(90, 180, -1, -1));
+
+        jLabel3.setText("SĐT:");
+        jPanel2.add(jLabel3, new org.netbeans.lib.awtextra.AbsoluteConstraints(90, 210, -1, -1));
+
+        jLabel7.setText("Email:");
+        jPanel2.add(jLabel7, new org.netbeans.lib.awtextra.AbsoluteConstraints(90, 240, -1, -1));
+
+        txtTenND.setText("jLabel9");
+        jPanel2.add(txtTenND, new org.netbeans.lib.awtextra.AbsoluteConstraints(190, 90, -1, -1));
+
+        txtNgatSinh.setText("jLabel10");
+        jPanel2.add(txtNgatSinh, new org.netbeans.lib.awtextra.AbsoluteConstraints(190, 120, -1, -1));
+
+        txtGioiTinh.setText("jLabel11");
+        jPanel2.add(txtGioiTinh, new org.netbeans.lib.awtextra.AbsoluteConstraints(190, 150, -1, -1));
+
+        txtCCCD.setText("jLabel12");
+        jPanel2.add(txtCCCD, new org.netbeans.lib.awtextra.AbsoluteConstraints(190, 180, -1, -1));
+
+        txtSDT.setText("jLabel14");
+        jPanel2.add(txtSDT, new org.netbeans.lib.awtextra.AbsoluteConstraints(190, 210, -1, -1));
+
+        txtEmail.setText("jLabel15");
+        jPanel2.add(txtEmail, new org.netbeans.lib.awtextra.AbsoluteConstraints(190, 240, -1, -1));
+
+        jLabel9.setIcon(new javax.swing.ImageIcon(getClass().getResource("/quanlythuvien/icon/back 2.png"))); // NOI18N
+        jLabel9.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                jLabel9MouseClicked(evt);
             }
         });
-        jPanel2.add(jButton5, new org.netbeans.lib.awtextra.AbsoluteConstraints(350, 360, 140, 30));
+        jPanel2.add(jLabel9, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 10, -1, -1));
 
         jLabel1.setIcon(new javax.swing.ImageIcon(getClass().getResource("/quanlythuvien/icon/FiveO - ELib Low Opacity.png"))); // NOI18N
-        jPanel2.add(jLabel1, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 0, 500, 410));
+        jPanel2.add(jLabel1, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 0, 450, 400));
 
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
@@ -146,9 +184,12 @@ public class HoSo extends javax.swing.JFrame {
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
-    private void jButton5ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton5ActionPerformed
+    private void jLabel9MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jLabel9MouseClicked
         // TODO add your handling code here:
-    }//GEN-LAST:event_jButton5ActionPerformed
+//        java.util.List<AccRunning> list = new ArrayList<AccRunning>();
+        ChucVu(this.list.get(0).isChucVu(), this.list);
+        
+    }//GEN-LAST:event_jLabel9MouseClicked
 
     /**
      * @param args the command line arguments
@@ -161,7 +202,7 @@ public class HoSo extends javax.swing.JFrame {
          */
         try {
             for (javax.swing.UIManager.LookAndFeelInfo info : javax.swing.UIManager.getInstalledLookAndFeels()) {
-                if ("Nimbus".equals(info.getName())) {
+                if ("Windows".equals(info.getName())) {
                     javax.swing.UIManager.setLookAndFeel(info.getClassName());
                     break;
                 }
@@ -187,22 +228,26 @@ public class HoSo extends javax.swing.JFrame {
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton jButton1;
-    private javax.swing.JButton jButton2;
     private javax.swing.JButton jButton3;
-    private javax.swing.JButton jButton4;
-    private javax.swing.JButton jButton5;
     private javax.swing.JLabel jLabel1;
-    private javax.swing.JLabel jLabel13;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel4;
     private javax.swing.JLabel jLabel5;
     private javax.swing.JLabel jLabel6;
     private javax.swing.JLabel jLabel7;
+    private javax.swing.JLabel jLabel8;
+    private javax.swing.JLabel jLabel9;
     private javax.swing.JMenu jMenu1;
     private javax.swing.JMenu jMenu2;
     private javax.swing.JMenuBar jMenuBar1;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel2;
+    private javax.swing.JLabel txtCCCD;
+    private javax.swing.JLabel txtEmail;
+    private javax.swing.JLabel txtGioiTinh;
+    private javax.swing.JLabel txtNgatSinh;
+    private javax.swing.JLabel txtSDT;
+    private javax.swing.JLabel txtTenND;
     // End of variables declaration//GEN-END:variables
 }
