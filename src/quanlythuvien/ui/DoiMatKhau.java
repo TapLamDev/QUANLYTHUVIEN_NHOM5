@@ -4,15 +4,20 @@
  */
 package quanlythuvien.ui;
 
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.PreparedStatement;
+import java.sql.Statement;
+import javax.swing.JOptionPane;
+import quanlythuvien.util.MsgBox;
+
 /**
  *
  * @author phamb
  */
 public class DoiMatKhau extends javax.swing.JFrame {
-
-    /**
-     * Creates new form DoiMatKhau
-     */
+String connectionUrl = "jdbc:sqlserver://localhost:1433;databaseName=Elib;user=sa;password=My27012003@";    
+ 
     public DoiMatKhau() {
         initComponents();
         setTitle("Đổi Mật Khẩu");
@@ -96,8 +101,18 @@ public class DoiMatKhau extends javax.swing.JFrame {
         jButton1.setForeground(new java.awt.Color(255, 206, 41));
         jButton1.setIcon(new javax.swing.ImageIcon(getClass().getResource("/quanlythuvien/icon/done 2.png"))); // NOI18N
         jButton1.setText("XÁC NHẬN");
+        jButton1.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton1ActionPerformed(evt);
+            }
+        });
 
         jLabel13.setIcon(new javax.swing.ImageIcon(getClass().getResource("/quanlythuvien/icon/back 2.png"))); // NOI18N
+        jLabel13.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                jLabel13MouseClicked(evt);
+            }
+        });
 
         txtMatKhau.setText("Nhập mật khẩu");
         txtMatKhau.addMouseListener(new java.awt.event.MouseAdapter() {
@@ -226,6 +241,15 @@ public class DoiMatKhau extends javax.swing.JFrame {
         // TODO add your handling code here:
     }//GEN-LAST:event_txtMatKhauMouseClicked
 
+    private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
+        // TODO add your handling code here:
+        this.Pass();
+    }//GEN-LAST:event_jButton1ActionPerformed
+
+    private void jLabel13MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jLabel13MouseClicked
+        // TODO add your handling code here:
+    }//GEN-LAST:event_jLabel13MouseClicked
+
     /**
      * @param args the command line arguments
      */
@@ -237,7 +261,7 @@ public class DoiMatKhau extends javax.swing.JFrame {
          */
         try {
             for (javax.swing.UIManager.LookAndFeelInfo info : javax.swing.UIManager.getInstalledLookAndFeels()) {
-                if ("Nimbus".equals(info.getName())) {
+                if ("Windows".equals(info.getName())) {
                     javax.swing.UIManager.setLookAndFeel(info.getClassName());
                     break;
                 }
@@ -281,4 +305,29 @@ public class DoiMatKhau extends javax.swing.JFrame {
     private javax.swing.JTextField txtTenND;
     private javax.swing.JPasswordField txtXacNhan;
     // End of variables declaration//GEN-END:variables
+    public void Pass(){
+        String manv = txtTenND.getText();
+        String matKhau = new String(txtMatKhau.getPassword());
+        String mkMoi = new String(txtMatKhauMoi.getPassword());
+        String mkXacNhan = new String(txtXacNhan.getPassword());
+        
+        
+        if(!mkMoi.equals(mkXacNhan)){
+            MsgBox.alert(this, "Xác nhận mật khẩu không đúng!");
+        }else{
+                try (Connection con = DriverManager.getConnection(connectionUrl); Statement stmt = con.createStatement();) {
+                String SQL = "update TaiKhoan set MatKhau = ? where TaiKhoan = ?";
+                PreparedStatement st = con.prepareStatement(SQL);
+                st.setString(1, mkMoi);
+                st.setString(2, txtTenND.getText());
+                st.executeUpdate();
+                JOptionPane.showMessageDialog(this, "Đổi mật khẩu thành công");
+                con.close();
+            } catch (Exception e) {
+                System.out.println(e);
+                JOptionPane.showMessageDialog(this, "Error");
+            }
+        }
+    }
+
 }

@@ -4,6 +4,12 @@
  */
 package quanlythuvien.ui;
 
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import javax.swing.Timer;
+
 /**
  *
  * @author phamb
@@ -15,8 +21,9 @@ public class ManHinhChinh_Admin extends javax.swing.JFrame {
      */
     public ManHinhChinh_Admin() {
         initComponents();
+        init();
         setTitle("FiveO - ELib");
-        setLocationRelativeTo(null);
+        setDefaultCloseOperation(DISPOSE_ON_CLOSE);
     }
 
     /**
@@ -36,6 +43,7 @@ public class ManHinhChinh_Admin extends javax.swing.JFrame {
         jLabel7 = new javax.swing.JLabel();
         jLabel9 = new javax.swing.JLabel();
         jLabel10 = new javax.swing.JLabel();
+        lblThoiGian = new javax.swing.JLabel();
         jLabel1 = new javax.swing.JLabel();
         jMenuBar1 = new javax.swing.JMenuBar();
         jMenu1 = new javax.swing.JMenu();
@@ -67,6 +75,11 @@ public class ManHinhChinh_Admin extends javax.swing.JFrame {
         getContentPane().add(jLabel2, new org.netbeans.lib.awtextra.AbsoluteConstraints(70, 260, -1, 80));
 
         jLabel3.setIcon(new javax.swing.ImageIcon(getClass().getResource("/quanlythuvien/icon/manage-staff.png"))); // NOI18N
+        jLabel3.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                jLabel3MouseClicked(evt);
+            }
+        });
         getContentPane().add(jLabel3, new org.netbeans.lib.awtextra.AbsoluteConstraints(220, 260, 60, 80));
 
         jLabel4.setIcon(new javax.swing.ImageIcon(getClass().getResource("/quanlythuvien/icon/manage-bill.png"))); // NOI18N
@@ -84,11 +97,21 @@ public class ManHinhChinh_Admin extends javax.swing.JFrame {
 
         jLabel9.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
         jLabel9.setText("QUẢN LÝ NHÂN VIÊN");
+        jLabel9.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                jLabel9MouseClicked(evt);
+            }
+        });
         getContentPane().add(jLabel9, new org.netbeans.lib.awtextra.AbsoluteConstraints(180, 350, -1, -1));
 
         jLabel10.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
         jLabel10.setText("QUẢN LÝ HÓA ĐƠN");
         getContentPane().add(jLabel10, new org.netbeans.lib.awtextra.AbsoluteConstraints(340, 350, -1, -1));
+
+        lblThoiGian.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
+        lblThoiGian.setForeground(new java.awt.Color(204, 102, 0));
+        lblThoiGian.setText("Timer");
+        getContentPane().add(lblThoiGian, new org.netbeans.lib.awtextra.AbsoluteConstraints(411, 0, 90, 30));
 
         jLabel1.setIcon(new javax.swing.ImageIcon(getClass().getResource("/quanlythuvien/icon/FiveO - ELib Low Opacity.png"))); // NOI18N
         getContentPane().add(jLabel1, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 0, 500, 460));
@@ -98,6 +121,11 @@ public class ManHinhChinh_Admin extends javax.swing.JFrame {
 
         jMenuItem1.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_P, java.awt.event.InputEvent.CTRL_DOWN_MASK));
         jMenuItem1.setText("Đổi mật khẩu");
+        jMenuItem1.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jMenuItem1ActionPerformed(evt);
+            }
+        });
         jMenu1.add(jMenuItem1);
 
         jMenuItem2.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_I, java.awt.event.InputEvent.CTRL_DOWN_MASK));
@@ -116,6 +144,11 @@ public class ManHinhChinh_Admin extends javax.swing.JFrame {
 
         jMenuItem4.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_F4, java.awt.event.InputEvent.ALT_DOWN_MASK));
         jMenuItem4.setText("Thoát");
+        jMenuItem4.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jMenuItem4ActionPerformed(evt);
+            }
+        });
         jMenu1.add(jMenuItem4);
 
         jMenuBar1.add(jMenu1);
@@ -135,6 +168,8 @@ public class ManHinhChinh_Admin extends javax.swing.JFrame {
 
     private void jMenuItem3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem3ActionPerformed
         // TODO add your handling code here:
+        this.dispose();
+        this.openDangNhap();
     }//GEN-LAST:event_jMenuItem3ActionPerformed
 
     private void jLabel7MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jLabel7MouseClicked
@@ -146,6 +181,26 @@ public class ManHinhChinh_Admin extends javax.swing.JFrame {
         // TODO add your handling code here:
         this.openQuanSach();
     }//GEN-LAST:event_jLabel2MouseClicked
+
+    private void jMenuItem4ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem4ActionPerformed
+        // TODO add your handling code here:
+        System.exit(0);
+    }//GEN-LAST:event_jMenuItem4ActionPerformed
+
+    private void jMenuItem1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem1ActionPerformed
+        // TODO add your handling code here:
+        this.openDoiMK();
+    }//GEN-LAST:event_jMenuItem1ActionPerformed
+
+    private void jLabel3MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jLabel3MouseClicked
+        // TODO add your handling code here:
+        this.openQuanNV();
+    }//GEN-LAST:event_jLabel3MouseClicked
+
+    private void jLabel9MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jLabel9MouseClicked
+        // TODO add your handling code here:
+        this.openQuanNV();
+    }//GEN-LAST:event_jLabel9MouseClicked
 
     /**
      * @param args the command line arguments
@@ -202,9 +257,43 @@ public class ManHinhChinh_Admin extends javax.swing.JFrame {
     private javax.swing.JMenuItem jMenuItem3;
     private javax.swing.JMenuItem jMenuItem4;
     private javax.swing.JPopupMenu.Separator jSeparator1;
+    private javax.swing.JLabel lblThoiGian;
     // End of variables declaration//GEN-END:variables
+        public void init() {
+        this.setLocationRelativeTo(null);
+//        new CuaSoChao(this, true).setVisible(true);
+//        new DangNhap(this, true).setVisible(true);
+//        new DangNhap(this, true).setLocationRelativeTo(null);
+        dongHo();
+    }
+        
+            private void dongHo() {
+        new Timer(0, new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                Date now = new Date();
+                SimpleDateFormat fomarter = new SimpleDateFormat("hh:mm:ss a");
+                String text = fomarter.format(now);
+                lblThoiGian.setText(text);
+            }
+        }).start();
+    }
+    
     private void openQuanSach(){
         new QuanlySach().setVisible(true);
+        this.dispose();
+    }
+    private void openDangNhap(){
+        new DangNhap(this,true).setVisible(true);
+        this.dispose();
+    }
+    private void openDoiMK(){
+        new DoiMatKhau().setVisible(true);
+        this.dispose();
+    }
+    
+    private void openQuanNV(){
+        new QuanLyNhanVien().setVisible(true);
         this.dispose();
     }
 

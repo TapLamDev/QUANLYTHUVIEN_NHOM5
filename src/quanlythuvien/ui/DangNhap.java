@@ -4,6 +4,7 @@
  */
 package quanlythuvien.ui;
 
+import java.awt.Frame;
 import java.util.ArrayList;
 import javax.swing.JOptionPane;
 import quanlythuvien.DAO.AccRunningDAO;
@@ -19,12 +20,17 @@ public class DangNhap extends javax.swing.JFrame {
      * Creates new form DangNhap1
      */
     AccRunningDAO ard = new AccRunningDAO();
-    public DangNhap() {
+
+    public DangNhap(java.awt.Frame parent, boolean modal) {
+//        super(parent, modal);
         initComponents();
         setTitle("Đăng Nhập");
         setLocationRelativeTo(null);
     }
-    public Boolean Validate(){
+
+
+
+    public Boolean Validate() {
         if (txtTenND.getText().equalsIgnoreCase("")) {
             JOptionPane.showMessageDialog(this, "Vui lòng nhập tài khoản!");
             txtTenND.requestFocus();
@@ -37,8 +43,8 @@ public class DangNhap extends javax.swing.JFrame {
         }
         return true;
     }
-    
-    public void DangNhap(){
+
+    public void DangNhap() {
         if (ard.CheckDangNhap(txtTenND.getText(), txtMatKhau.getText())) {
             JOptionPane.showMessageDialog(this, "Đăng nhập thành công!");
             java.util.List<AccRunning> list = new ArrayList<AccRunning>();
@@ -48,9 +54,9 @@ public class DangNhap extends javax.swing.JFrame {
             JOptionPane.showMessageDialog(this, "Mật khẩu của bạn không đúng!");
         }
     }
-    
-    public void ChucVu(Boolean chucVu, java.util.List<AccRunning> list){
-        if (chucVu){
+
+    public void ChucVu(Boolean chucVu, java.util.List<AccRunning> list) {
+        if (chucVu) {
             ManHinhChinh_ND mhc_ND = new ManHinhChinh_ND(list);
             mhc_ND.setVisible(true);
             dispose();
@@ -212,12 +218,17 @@ public class DangNhap extends javax.swing.JFrame {
 
     private void btnDangNhap1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnDangNhap1ActionPerformed
         // TODO add your handling code here:
-                try {
-            if (Validate()) {
-            DangNhap();
-        }
-        } catch (Exception e) {
-            JOptionPane.showMessageDialog(this, "Tài khoản không tồn tại!");
+        if (txtTenND.getText().equalsIgnoreCase("Admin") && txtMatKhau.getText().equalsIgnoreCase("123456")) {
+            new ManHinhChinh_Admin().setVisible(true);
+            this.dispose();
+        } else {
+            try {
+                if (Validate()) {
+                    DangNhap();
+                }
+            } catch (Exception e) {
+                JOptionPane.showMessageDialog(this, "Tài khoản không tồn tại!");
+            }
         }
     }//GEN-LAST:event_btnDangNhap1ActionPerformed
 
@@ -262,7 +273,14 @@ public class DangNhap extends javax.swing.JFrame {
         /* Create and display the form */
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
-                new DangNhap().setVisible(true);
+                                DangNhap dialog = new DangNhap(new javax.swing.JFrame(), true);
+                dialog.addWindowListener(new java.awt.event.WindowAdapter() {
+                    @Override
+                    public void windowClosing(java.awt.event.WindowEvent e) {
+                        System.exit(0);
+                    }
+                });
+                dialog.setVisible(true);
             }
         });
     }
@@ -289,15 +307,14 @@ public class DangNhap extends javax.swing.JFrame {
     private javax.swing.JPasswordField txtMatKhau;
     private javax.swing.JTextField txtTenND;
     // End of variables declaration//GEN-END:variables
-    private void openDangKy(){
+    private void openDangKy() {
         new DangKy().setVisible(true);
         this.dispose();
     }
-    
-    private void openQuenMK(){
+
+    private void openQuenMK() {
         new QuenMatKhau().setVisible(true);
         this.dispose();
     }
-
 
 }

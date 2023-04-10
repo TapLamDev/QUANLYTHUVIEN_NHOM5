@@ -512,7 +512,7 @@ public class DangKy extends javax.swing.JFrame {
     private javax.swing.JTextField txtXacNhanMK;
     // End of variables declaration//GEN-END:variables
     private void openDangNhap(){
-        new DangNhap().setVisible(true);
+        new DangNhap(this,true).setVisible(true);
         this.dispose();
     }
 

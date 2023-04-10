@@ -23,6 +23,7 @@ public class CuaSoChao extends javax.swing.JDialog {
         initComponents();
         init();
         setTitle("FiveO - ELib");
+        setDefaultCloseOperation(DISPOSE_ON_CLOSE);
     }
 
     /**
